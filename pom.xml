@@ -91,6 +91,12 @@
         <!-- Release generation -->
         <maven-jgitflow-plugin.version>1.0-alpha21.1</maven-jgitflow-plugin.version>
         <maven-license-plugin.version>1.2.5</maven-license-plugin.version>
+        
+        <!-- sonar -->
+        <!-- exclusions must be synchronized with cobertura-maven-plugin exclusions -->
+        <sonar.exclusions>com/telefonica/**/exception/**/*,com/telefonica/**/bootstrap/*,
+            com/telefonica/**/model/**/*, org/w3/**/*, org/openstack/**/*,com/telefonica/**/aspects/**/*</sonar.exclusions>
+        <sonar.dynamic>reuseReports</sonar.dynamic>
 
     </properties>
 
@@ -253,6 +259,7 @@
                 <version>${cobertura-maven-plugin.version}</version>
                 <configuration>
                     <format>xml</format>
+                    <format>html</format>
                     <maxmem>256m</maxmem>
                     <!-- aggregated reports for multi-module projects -->
                     <aggregate>true</aggregate>
@@ -261,10 +268,12 @@
                             <ignore>org.openstack.docs.common.api.v1.*</ignore>
                         </ignores>
                         <excludes>
-                            <exclude>**/*Test*.class</exclude>
-                            <exclude>**/model/**.class</exclude>
-                            <exclude>org/openstack/**/*</exclude>
+                            <exclude>com/telefonica/**/exception/**/*</exclude>
+                            <exclude>com/telefonica/**/bootstrap/*</exclude>
+                            <exclude>com/telefonica/**/model/**/*</exclude>
+                            <exclude>com/telefonica/**/aspects/**/*</exclude>
                             <exclude>org/w3/**/*</exclude>
+                            <exclude>org/openstack/**/*</exclude>
                         </excludes>
                     </instrumentation>
                 </configuration>
