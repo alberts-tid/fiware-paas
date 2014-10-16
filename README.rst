@@ -1,7 +1,8 @@
 PaaS Manager - Overview
 ____________________________
 
-[![Build Status](https://travis-ci.org/telefonicaid/fiware-paas.svg)](https://travis-ci.org/telefonicaid/fiware-paas) [![Coverage Status](https://coveralls.io/repos/telefonicaid/fiware-paas/badge.png?branch=develop)](https://coveralls.io/r/telefonicaid/fiware-paas?branch=develop) [![help stackoverflow](http://b.repl.ca/v1/help-stackoverflow-orange.png)](http://www.stackoverflow.com)
+
+| |Build Status| |Coverage Status| |StackOverflow|
 
 What you get
 ============
@@ -31,26 +32,29 @@ of that.
 
 -   **Decoupling the management  and provisioning**
 
-     Decoupling the management of the catalogue (specifications of what can be deployed) 
-     and the management of the inventory (instances of what has been already deployed). 
-     In addition, decoupling the management of environments from the management of applications, 
-     since there could be uses cases where the users of those functionalities could be different ones.
-    
-   
-
-
-Fast elasticity mechanisms, avoiding overhead or repeated work as much as possible during elasticity.
+    Decoupling the management of the catalogue (specifications of what can be deployed) 
+    and the management of the inventory (instances of what has been already deployed). 
+    In addition, decoupling the management of environments from the management of applications, 
+    since there could be uses cases where the users of those functionalities could be different ones.
 
 
 Documentation
 =============
 
--   `User and Programmers Guide <user_guide.rst>`_
--   `Installation and Administration Guide <admin_guide.rst>`_
+-   `User and Programmers Guide <doc/user_guide.rst>`_
+-   `Installation and Administration Guide <doc/admin_guide.rst>`_
 
 
-References
-==========
+.. IMAGES
+
+.. |Build Status| image:: https://coveralls.io/repos/telefonicaid/fiware-paas/badge.png?branch=develop
+   :target: https://travis-ci.org/telefonicaid/fiware-paas
+.. |Coverage Status| image:: https://travis-ci.org/telefonicaid/fiware-paas.svg 
+   :target: https://coveralls.io/r/telefonicaid/fiware-paas
+.. |StackOverflow| image:: http://b.repl.ca/v1/help-stackoverflow-orange.png
+   :target: https://travis-ci.org/telefonicaid/fiware-paas
+   
+.. REFERENCES
 
 .. _FIWARE.OpenSpecification.Cloud.PaaS: http://forge.fi-ware.org/plugins/mediawiki/wiki/fiware/index.php/FIWARE.OpenSpecification.Cloud.PaaS
 .. _PaaS_Open_RESTful_API_Specification_(PRELIMINARY): http://forge.fi-ware.org/plugins/mediawiki/wiki/fiware/index.php/PaaS_Open_RESTful_API_Specification_(PRELIMINARY)

@@ -37,9 +37,9 @@ if __name__ == "__main__":
 
     cmd_args = []
     cmd_args.append('hola')
-    cmd_args.append('env_jesus04')
-    cmd_args.append('bluep_jesus04')
-    cmd_args.append('tier16')
+    cmd_args.append('envjesus50')
+    cmd_args.append('bluepjesus50')
+    cmd_args.append('tiertest')
     cmd_args.append('mysql=1.2.4')
 
     config = {}
@@ -83,4 +83,3 @@ if __name__ == "__main__":
     print('borrado del blueprint Template: ' + environment_name)
     env_request.delete_environment(environment_name)
     print("  OK")
-

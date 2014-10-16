@@ -212,23 +212,7 @@ public class InfrastructureManagerClaudiaImplTest {
         Mockito.doNothing().when(claudiaClient).undeployVMReplica(any(ClaudiaData.class), any(TierInstance.class));
         Mockito.doNothing().when(networkInstanceManager)
                 .delete(any(ClaudiaData.class), any(NetworkInstance.class), anyString());
-
-        /*
-         * when(claudiaClient.getIP(any(ClaudiaData.class), any(String.class), Matchers.anyInt(), any(VM.class)))
-         * .thenReturn(ips); Mockito.doNothing().when(claudiaClient) .deployVM(any(ClaudiaData.class),
-         * any(TierInstance.class), Matchers.anyInt(), any(VM.class));
-         * when(ovfUtils.changeInitialResources(any(String.class))).thenReturn(null);
-         * when(ovfUtils.getOvfsSingleVM(any(String.class))).thenReturn(ovfs);
-         * when(claudiaClient.browseVDC(any(ClaudiaData.class))).thenReturn("vdc");
-         * when(claudiaClient.browseService(any(ClaudiaData.class))).thenReturn("vapp");
-         * when(environmentInstanceDao.update(any(EnvironmentInstance.class))).thenReturn(envInst);
-         * when(claudiaClient.browseVMReplica(any(ClaudiaData.class), any(String.class), anyInt(), any(VM.class)))
-         * .thenReturn("vapp"); Mockito.doThrow(new EntityNotFoundException(TierInstance.class, "test", tierInstance))
-         * .when(tierInstanceManager).load(any(String.class)); when(tierInstanceManager.create(any(ClaudiaData.class),
-         * any(String.class), any(TierInstance.class))) .thenReturn(tierInstance);
-         * Mockito.doNothing().when(monitoringClient).startMonitoring(any(String.class), any(String.class));
-         */
-
+        when(tierInstanceManager.loadNetworkInstnace(any(String.class))).thenReturn(tierInstance);
         manager.deleteEnvironment(claudiaData, envInst);
 
     }

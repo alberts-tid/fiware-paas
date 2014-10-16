@@ -1,103 +1,87 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
               http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
               http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd"
-	default-autowire="no">
+       default-autowire="no">
 
-	<!-- RESOURCES -->
+    <!-- RESOURCES -->
 
-	<bean id="applicationInstanceResource" lazy-init="true"
-		class="com.telefonica.euro_iaas.paasmanager.rest.resources.ApplicationInstanceResourceImpl">
-		<property name="validator" ref="applicationInstanceResourceValidator" />
-		<property name="taskManager" ref="taskManager" />
-		<property name="environmentInstanceAsyncManager" ref="environmentInstanceAsyncManager" />
-		<property name="environmentInstanceManager" ref="environmentInstanceManager" />
-		<property name="applicationInstanceAsyncManager" ref="applicationInstanceAsyncManager" />
-		<property name="applicationInstanceManager" ref="applicationInstanceManager" />
+    <bean id="applicationInstanceResource" lazy-init="true"
+          class="com.telefonica.euro_iaas.paasmanager.rest.resources.ApplicationInstanceResourceImpl">
+        <property name="validator" ref="applicationInstanceResourceValidator"/>
+        <property name="taskManager" ref="taskManager"/>
+        <property name="environmentInstanceAsyncManager" ref="environmentInstanceAsyncManager"/>
+        <property name="environmentInstanceManager" ref="environmentInstanceManager"/>
+        <property name="applicationInstanceAsyncManager" ref="applicationInstanceAsyncManager"/>
+        <property name="applicationInstanceManager" ref="applicationInstanceManager"/>
 
-	</bean>
+    </bean>
 
-	<bean id="environmentInstanceResource" lazy-init="true"
-		class="com.telefonica.euro_iaas.paasmanager.rest.resources.EnvironmentInstanceResourceImpl">
-		<property name="validator" ref="environmentInstanceResourceValidator" />
-		<property name="taskManager" ref="taskManager" />
-		<property name="environmentInstanceAsyncManager" ref="environmentInstanceAsyncManager" />
-		<property name="environmentInstanceManager" ref="environmentInstanceManager" />
-		<!-- <property name="environmentTypeDao" ref="environmentTypeDao"/> -->
-		<property name="systemPropertiesProvider" ref="systemPropertiesProvider" />
-		<!-- <property name="productReleaseManager" ref="productReleaseManager"/> -->
-	</bean>
+    <bean id="environmentInstanceResource" lazy-init="true"
+          class="com.telefonica.euro_iaas.paasmanager.rest.resources.EnvironmentInstanceResourceImpl">
+        <property name="validator" ref="environmentInstanceResourceValidator"/>
+        <property name="taskManager" ref="taskManager"/>
+        <property name="environmentInstanceAsyncManager" ref="environmentInstanceAsyncManager"/>
+        <property name="environmentInstanceManager" ref="environmentInstanceManager"/>
+        <!-- <property name="environmentTypeDao" ref="environmentTypeDao"/> -->
+        <property name="systemPropertiesProvider" ref="systemPropertiesProvider"/>
+        <!-- <property name="productReleaseManager" ref="productReleaseManager"/> -->
+    </bean>
 
-	<bean id="environmentResource" lazy-init="true"
-		class="com.telefonica.euro_iaas.paasmanager.rest.resources.EnvironmentResourceImpl">
-		<property name="systemPropertiesProvider" ref="systemPropertiesProvider" />
-		<property name="environmentResourceValidator" ref="environmentResourceValidator" />
-		<property name="environmentManager" ref="environmentManager" />
-	</bean>
+    <bean id="environmentResource" lazy-init="true"
+          class="com.telefonica.euro_iaas.paasmanager.rest.resources.EnvironmentResourceImpl">
+        <property name="systemPropertiesProvider" ref="systemPropertiesProvider"/>
+        <property name="environmentResourceValidator" ref="environmentResourceValidator"/>
+        <property name="environmentManager" ref="environmentManager"/>
+    </bean>
 
-	<bean id="abstractEnvironmentResource" lazy-init="true"
-		class="com.telefonica.euro_iaas.paasmanager.rest.resources.AbstractEnvironmentResourceImpl">
+    <bean id="abstractEnvironmentResource" lazy-init="true"
+          class="com.telefonica.euro_iaas.paasmanager.rest.resources.AbstractEnvironmentResourceImpl">
 
-		<property name="environmentResourceValidator" ref="environmentResourceValidator" />
-		<property name="environmentManager" ref="environmentManager" />
-	</bean>
+        <property name="environmentResourceValidator" ref="environmentResourceValidator"/>
+        <property name="environmentManager" ref="environmentManager"/>
+    </bean>
 
-	<bean id="productReleaseResource" lazy-init="true"
-		class="com.telefonica.euro_iaas.paasmanager.rest.resources.ProductReleaseResourceImpl">
-		<property name="systemPropertiesProvider" ref="systemPropertiesProvider" />
-	</bean>
+    <bean id="productReleaseResource" lazy-init="true"
+          class="com.telefonica.euro_iaas.paasmanager.rest.resources.ProductReleaseResourceImpl">
+        <property name="systemPropertiesProvider" ref="systemPropertiesProvider"/>
+    </bean>
 
-	<bean id="tierResource" lazy-init="true"
-		class="com.telefonica.euro_iaas.paasmanager.rest.resources.TierResourceImpl">
-		<property name="systemPropertiesProvider" ref="systemPropertiesProvider" />
-		<property name="tierResourceValidator" ref="tierResourceValidator" />
-		<property name="environmentManager" ref="environmentManager" />
-		<property name="tierManager" ref="tierManager" />
-		<property name="productReleaseDao" ref="productReleaseDao" />
-	</bean>
+    <bean id="tierResource" lazy-init="true"
+          class="com.telefonica.euro_iaas.paasmanager.rest.resources.TierResourceImpl">
+        <property name="systemPropertiesProvider" ref="systemPropertiesProvider"/>
+        <property name="tierResourceValidator" ref="tierResourceValidator"/>
+        <property name="environmentManager" ref="environmentManager"/>
+        <property name="tierManager" ref="tierManager"/>
+        <property name="productReleaseDao" ref="productReleaseDao"/>
+    </bean>
 
-	<bean id="abstractTierResource" lazy-init="true"
-		class="com.telefonica.euro_iaas.paasmanager.rest.resources.AbstractTierResourceImpl">
-		<property name="systemPropertiesProvider" ref="systemPropertiesProvider" />
-		<property name="tierResourceValidator" ref="tierResourceValidator" />
-		<property name="environmentManager" ref="environmentManager" />
-		<property name="tierManager" ref="tierManager" />
-		<property name="productReleaseDao" ref="productReleaseDao" />
-	</bean>
+    <bean id="abstractTierResource" lazy-init="true"
+          class="com.telefonica.euro_iaas.paasmanager.rest.resources.AbstractTierResourceImpl">
+        <property name="systemPropertiesProvider" ref="systemPropertiesProvider"/>
+        <property name="tierResourceValidator" ref="tierResourceValidator"/>
+        <property name="environmentManager" ref="environmentManager"/>
+        <property name="tierManager" ref="tierManager"/>
+        <property name="productReleaseDao" ref="productReleaseDao"/>
+    </bean>
 
-	<bean id="tierInstanceResource" lazy-init="true"
-		class="com.telefonica.euro_iaas.paasmanager.rest.resources.TierInstanceResourceImpl">
-		<property name="validatorTierInstance" ref="tierInstanceResourceValidator" />
-		<property name="systemPropertiesProvider" ref="systemPropertiesProvider" />
-		<property name="environmentInstanceManager" ref="environmentInstanceManager" />
-		<property name="tierInstanceAsyncManager" ref="tierInstanceAsyncManager" />
-		<property name="tierManager" ref="tierManager" />
-		<property name="taskManager" ref="taskManager" />
-		<property name="tierInstanceManager" ref="tierInstanceManager" />
-		<!-- <property name="tierTypeDao" ref="tierTypeDao"/> -->
-	</bean>
+    <bean id="tierInstanceResource" lazy-init="true"
+          class="com.telefonica.euro_iaas.paasmanager.rest.resources.TierInstanceResourceImpl">
+        <property name="validatorTierInstance" ref="tierInstanceResourceValidator"/>
+        <property name="systemPropertiesProvider" ref="systemPropertiesProvider"/>
+        <property name="environmentInstanceManager" ref="environmentInstanceManager"/>
+        <property name="tierInstanceAsyncManager" ref="tierInstanceAsyncManager"/>
+        <property name="tierManager" ref="tierManager"/>
+        <property name="taskManager" ref="taskManager"/>
+        <property name="tierInstanceManager" ref="tierInstanceManager"/>
+        <!-- <property name="tierTypeDao" ref="tierTypeDao"/> -->
+    </bean>
     <!-- <bean id="tierResource" lazy-init="true" class="com.telefonica.euro_iaas.paasmanager.rest.resources.TierResourceImpl">
 		</bean> -->
 
-	<aop:config proxy-target-class="true">
-		<aop:advisor advice-ref="traceInterceptor"
-			pointcut="execution(* com.telefonica.euro_iaas.paasmanager.rest.resources..*(..))" />
-		<aop:advisor advice-ref="traceInterceptor"
-			pointcut="execution(* com.telefonica.euro_iaas.paasmanager.dao.impl..*(..))" />
-		<aop:advisor advice-ref="traceInterceptor"
-			pointcut="execution(* com.telefonica.euro_iaas.paasmanager.manager.impl..*(..))" />
-	</aop:config>
 
-	<bean name="traceInterceptor"
-		class="com.telefonica.euro_iaas.paasmanager.rest.aspects.TraceInterceptor">
-		<property name="enterMessage"
-			value="comp=SDC - $[targetClassShortName] | op=$[methodName] | msg=ENTER: $[targetClassShortName].$[methodName]($[arguments])" />
-		<property name="exitMessage"
-			value="comp=SDC - $[targetClassShortName] | op=$[methodName] | msg=EXIT: $[targetClassShortName].$[methodName](): $[returnValue]" />
-		<property name="loggerName" value="aspectLogger" />
-	</bean>
 
 	<!-- =========== == VALIDATORS == ================ -->
 
@@ -145,6 +129,5 @@
 		class="com.telefonica.euro_iaas.paasmanager.rest.validation.ResourceValidatorImpl">
 
 	</bean>
-
 
 </beans>

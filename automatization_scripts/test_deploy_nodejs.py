@@ -43,8 +43,8 @@ instance_request = EnvironmentInstanceRequest(config['keystone_url'], config['pa
     config['user'], config['password'],
     config['vdc'], config['sdc_url'])
 
-environment_name = 'diez'
-blueprintname = 'diez'
+environment_name = 'dddsdd'
+blueprintname = 'dddsdd'
 
 print('Create a blueprint Template No tiers for nodemysql: ')
 g.add_environment(environment_name, 'description')
@@ -67,10 +67,10 @@ instance_request.add_blueprint_instance(blueprint_instance)
 print ('OK')
 
 print('Delete an environment Instance' + blueprintname )
-instance_request.delete_blueprint_instance(blueprintname)
+#instance_request.delete_blueprint_instance(blueprintname)
 
 print('borrado del blueprint Template No tiers for contextbroker: ')
-g.delete_environment(environment_name)
+#g.delete_environment(environment_name)
 
 print("  OK")
 

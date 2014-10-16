@@ -88,6 +88,23 @@
                 com.telefonica.euro_iaas.paasmanager.rest
             </param-value>
         </init-param>
+
+        <init-param>
+            <param-name>com.sun.jersey.config.property.packages</param-name>
+            <param-value>
+                <!--
+                  Jackson 2.x JAX-RS @Providers
+                -->
+                com.fasterxml.jackson.jaxrs.json  <!-- JSON -->
+                com.fasterxml.jackson.jaxrs.xml   <!-- XML -->
+            </param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>javax.ws.rs.Application</param-name>
+            <param-value>com.telefonica.euro_iaas.paasmanager.rest.util.MyRESTAPIApp</param-value>
+        </init-param>
+
         <load-on-startup>1</load-on-startup>
     </servlet>
 
@@ -155,31 +172,31 @@
         <servlet-name>ErrorHandler</servlet-name>
         <url-pattern>/ErrorHandler</url-pattern>
     </servlet-mapping>
-        <error-page>
-            <error-code>404</error-code>
-            <location>/ErrorHandler</location>
-        </error-page>
-        <error-page>
-            <error-code>401</error-code>
-            <location>/ErrorHandler</location>
-        </error-page>
+    <error-page>
+        <error-code>404</error-code>
+        <location>/ErrorHandler</location>
+    </error-page>
+    <error-page>
+        <error-code>401</error-code>
+        <location>/ErrorHandler</location>
+    </error-page>
 
-        <error-page>
-            <error-code>500</error-code>
-            <location>/ErrorHandler</location>
-        </error-page>
-        <error-page>
-            <error-code>400</error-code>
-            <location>/ErrorHandler</location>
-        </error-page>
-        <error-page>
-            <error-code>403</error-code>
-            <location>/ErrorHandler</location>
-        </error-page>
+    <error-page>
+        <error-code>500</error-code>
+        <location>/ErrorHandler</location>
+    </error-page>
+    <error-page>
+        <error-code>400</error-code>
+        <location>/ErrorHandler</location>
+    </error-page>
+    <error-page>
+        <error-code>403</error-code>
+        <location>/ErrorHandler</location>
+    </error-page>
 
-        <error-page>
-            <exception-type>java.lang.Throwable</exception-type>
-            <location>/ErrorHandler</location>
-        </error-page>
+    <error-page>
+        <exception-type>java.lang.Throwable</exception-type>
+        <location>/ErrorHandler</location>
+    </error-page>
 
 </web-app>

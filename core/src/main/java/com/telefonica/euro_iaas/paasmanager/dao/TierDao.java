@@ -73,24 +73,26 @@ public interface TierDao extends BaseDAO<Tier, String> {
      * @return
      */
     String findRegionBySecurityGroup(String idSecurityGroup) throws EntityNotFoundException;
-    
+
     /**
-     * 
      * @param tierName
      * @param vdc
      * @param environmentName
      * @return
-     * @throws EntityNotFoundException 
+     * @throws EntityNotFoundException
      */
     Tier loadTierWithNetworks(String tierName, String vdc, String environmentName) throws EntityNotFoundException;
 
     /**
-     * 
      * @param networkName
      * @return
-     * @throws EntityNotFoundException 
+     * @throws EntityNotFoundException
      */
-	List<Tier> findAllWithNetwork(String networkName);
-	
-	
+    List<Tier> findAllWithNetwork(String networkName);
+
+    /**
+     * @param newTier
+     * @return
+     */
+    Tier loadComplete(Tier newTier) throws EntityNotFoundException;
 }

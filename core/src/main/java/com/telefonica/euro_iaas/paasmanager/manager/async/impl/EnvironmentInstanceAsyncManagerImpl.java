@@ -66,6 +66,7 @@ public class EnvironmentInstanceAsyncManagerImpl implements EnvironmentInstanceA
     private TaskNotificator taskNotificator;
 
     @Async
+
     public void create(ClaudiaData claudiaData, EnvironmentInstance environmentInstance, Task task, String callback) {
         log.debug ("Create enviornment instance");
         try {

@@ -572,7 +572,8 @@ public class TierManagerImpl implements TierManager {
     public Tier update(Tier tier) throws InvalidEntityException {
         log.info("Update tier " + tier.getName());
         try {
-            return tierDao.update(tier);
+            Tier newTier = tierDao.update(tier);
+            return tierDao.loadComplete(newTier);
         } catch (Exception e) {
             log.error("It is not possible to update the tier " + tier.getName() + " : " + e.getMessage(), e);
             throw new InvalidEntityException("It is not possible to update the tier " + tier.getName() + " : "

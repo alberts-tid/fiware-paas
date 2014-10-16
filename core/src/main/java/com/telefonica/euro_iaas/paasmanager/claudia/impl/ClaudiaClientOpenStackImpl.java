@@ -450,7 +450,7 @@ public class ClaudiaClientOpenStackImpl implements ClaudiaClient {
         // openStackUtilImpl = new OpenStackUtilImpl(claudiaData.getUser());
 
         log.debug("Deploy server " + claudiaData.getService() + " tier instance " + tierInstance.getName()
-                + " replica " + replica + " with networks " + tierInstance.getNetworkInstances()
+                + " replica " + replica + " with networks " + tierInstance.getNetworkInstances().size()
                 + " and region " + tierInstance.getTier().getRegion());
 
         if (tierInstance.getNetworkInstances().isEmpty()) {

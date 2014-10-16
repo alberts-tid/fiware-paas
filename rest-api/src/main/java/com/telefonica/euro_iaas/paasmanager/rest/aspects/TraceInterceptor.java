@@ -22,7 +22,6 @@
  * </p>
  */
 
-
 package com.telefonica.euro_iaas.paasmanager.rest.aspects;
 
 import org.aopalliance.intercept.MethodInvocation;

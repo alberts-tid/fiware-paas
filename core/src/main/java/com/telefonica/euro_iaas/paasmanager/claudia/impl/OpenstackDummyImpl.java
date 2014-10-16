@@ -29,12 +29,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.WebResource.Builder;
 import com.telefonica.euro_iaas.paasmanager.claudia.ClaudiaClient;
 import com.telefonica.euro_iaas.paasmanager.exception.ClaudiaResourceNotFoundException;
 import com.telefonica.euro_iaas.paasmanager.exception.ClaudiaRetrieveInfoException;
@@ -189,20 +191,19 @@ public class OpenstackDummyImpl implements ClaudiaClient {
             payload = "{\"server\": \n" + "{\"name\": \"" + name
                     + "\", \"imageRef\": \"44dcdba3-a75d-46a3-b209-5e9035d2435e\", \"flavorRef\": \"2\" }}";
 
-            Client client = new Client();
-            ClientResponse response = null;
+            Client client = ClientBuilder.newClient();
 
-            WebResource wr = client.resource(url);
-            Builder builder = wr.accept(MediaType.APPLICATION_JSON).type(MediaType.APPLICATION_JSON).entity(payload);
+            WebTarget wr = client.target(url);
+            Invocation.Builder builder = wr.request(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON);
 
             Map<String, String> header = getHeaders(claudiaData.getUser());
             for (String key : header.keySet()) {
                 builder = builder.header(key, header.get(key));
             }
 
-            response = builder.post(ClientResponse.class);
+            Response response = builder.post(Entity.entity(payload, MediaType.APPLICATION_JSON));
 
-            String result = response.getEntity(String.class);
+            String result = response.readEntity(String.class);
 
             String id = result.substring(result.indexOf("\"id\": \"") + "\"id\": \"".length(),
                     result.indexOf(", \"links\"") - 1);
@@ -285,20 +286,20 @@ public class OpenstackDummyImpl implements ClaudiaClient {
         String url = "http://130.206.80.63:8774/v2/" + vdc + "/servers/" + this.auxIdVM;
         try {
 
-            Client client = new Client();
-            ClientResponse response = null;
+            Client client = ClientBuilder.newClient();
+            Response response;
 
-            WebResource wr = client.resource(url);
-            Builder builder = wr.accept(MediaType.APPLICATION_JSON);
+            WebTarget wr = client.target(url);
+            Invocation.Builder builder = wr.request(MediaType.APPLICATION_JSON);
 
             Map<String, String> header = getHeaders(user);
             for (String key : header.keySet()) {
                 builder = builder.header(key, header.get(key));
             }
 
-            response = builder.get(ClientResponse.class);
+            response = builder.get();
 
-            String result = response.getEntity(String.class);
+            String result = response.readEntity(String.class);
 
             String ip = result.substring(result.indexOf("\"addr\": \"") + "\"addr\": \"".length(),
                     result.indexOf("\"}]}"));

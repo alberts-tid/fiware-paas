@@ -28,6 +28,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.xml.namespace.QName;
 
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -43,16 +49,13 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.UniformInterfaceException;
-import com.sun.jersey.api.client.WebResource;
 import com.telefonica.euro_iaas.paasmanager.model.dto.PaasManagerUser;
 import com.telefonica.euro_iaas.paasmanager.util.Configuration;
 import com.telefonica.euro_iaas.paasmanager.util.SystemPropertiesProvider;
 
 /**
  * The Class OpenStackAuthenticationProvider.
- *
+ * 
  * @author fernandolopezaguilar
  */
 public class OpenStackAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
@@ -105,7 +108,7 @@ public class OpenStackAuthenticationProvider extends AbstractUserDetailsAuthenti
      */
     public OpenStackAuthenticationProvider() {
 
-        client = Client.create();
+        client = ClientBuilder.newClient();
         oSAuthToken = null;
     }
 
@@ -165,38 +168,39 @@ public class OpenStackAuthenticationProvider extends AbstractUserDetailsAuthenti
         log.debug("Keystone URL : " + keystoneURL);
         log.debug("adminToken : " + credential[0]);
 
-        WebResource webResource = client.resource(keystoneURL);
+        WebTarget webResource = client.target(keystoneURL);
         try {
 
-            // Validate user's token
-            return validateUserToken(
-                    token,
-                    tenantId,
-                    webResource.path("tokens").path(token).header("Accept", "application/xml")
-                            .header("X-Auth-Token", credential[0]).get(AuthenticateResponse.class));
+            WebTarget tokens = webResource.path("tokens").path(token);
+            Invocation.Builder builder = tokens.request();
+            Response response = builder.accept(MediaType.APPLICATION_XML).header("X-Auth-Token", credential[0]).get();
 
-        } catch (UniformInterfaceException e) {
+            if (response.getStatus() == 200) {
+                // Validate user's token
+                return validateUserToken(token, tenantId, response.readEntity(AuthenticateResponse.class));
+            } else {
 
-            log.warn("response status:" + e.getResponse().getStatus());
+                log.warn("response status:" + response.getStatus());
 
-            if (e.getResponse().getStatus() == CODE_401) {
-                // create new admin token
-                configureOpenStackAuthenticationToken(keystoneURL, adminUser, adminPass, adminTenant, thresholdString,
-                        httpClient);
-                String[] newCredentials = oSAuthToken.getCredentials();
-                // try validateUserToken
-                WebResource webResource2 = client.resource(keystoneURL);
-                return validateUserToken(
-                        token,
-                        tenantId,
-                        webResource2.path("tokens").path(token).header("Accept", "application/xml")
-                                .header("X-Auth-Token", newCredentials[0]).get(AuthenticateResponse.class));
+                if (response.getStatus() == CODE_401) {
+                    // create new admin token
+                    configureOpenStackAuthenticationToken(keystoneURL, adminUser, adminPass, adminTenant,
+                            thresholdString, httpClient);
+                    String[] newCredentials = oSAuthToken.getCredentials();
+                    // try validateUserToken
+                    WebTarget webResource2 = client.target(keystoneURL);
+                    return validateUserToken(
+                            token,
+                            tenantId,
+                            webResource2.path("tokens").path(token).request(MediaType.APPLICATION_XML)
+                                    .header("X-Auth-Token", newCredentials[0]).get(AuthenticateResponse.class));
 
-            } else if ((e.getResponse().getStatus() == CODE_403) || (e.getResponse().getStatus() == CODE_404)) {
-                throw new BadCredentialsException("Token not valid", e);
+                } else if ((response.getStatus() == CODE_403) || (response.getStatus() == CODE_404)) {
+                    throw new BadCredentialsException("Token not valid");
+                }
+
+                throw new AuthenticationServiceException("Token not valid");
             }
-
-            throw new AuthenticationServiceException("Token not valid", e);
         } catch (Exception e) {
             throw new AuthenticationServiceException("Unknown problem", e);
         }
@@ -210,8 +214,7 @@ public class OpenStackAuthenticationProvider extends AbstractUserDetailsAuthenti
      * @param authenticateResponse
      * @return
      */
-    private PaasManagerUser validateUserToken(String token, String tenantId,
-                                              AuthenticateResponse authenticateResponse) {
+    private PaasManagerUser validateUserToken(String token, String tenantId, AuthenticateResponse authenticateResponse) {
 
         AuthenticateResponse responseAuth = authenticateResponse;
 

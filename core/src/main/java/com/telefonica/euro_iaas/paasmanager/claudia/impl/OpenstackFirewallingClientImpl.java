@@ -29,7 +29,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -37,10 +43,6 @@ import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.WebResource.Builder;
 import com.telefonica.euro_iaas.commons.dao.EntityNotFoundException;
 import com.telefonica.euro_iaas.paasmanager.claudia.FirewallingClient;
 import com.telefonica.euro_iaas.paasmanager.exception.InfrastructureException;
@@ -80,21 +82,21 @@ public class OpenstackFirewallingClientImpl implements FirewallingClient {
 
         try {
 
-            Client client = new Client();
+            Client client = ClientBuilder.newClient();
 
-            ClientResponse response = null;
+            Response response = null;
 
-            WebResource wr = client.resource(url);
-            Builder builder = wr.accept(MediaType.APPLICATION_JSON).type(MediaType.APPLICATION_JSON).entity(payload);
+            WebTarget wr = client.target(url);
+            Invocation.Builder builder = wr.request(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON);
 
             Map<String, String> header = getHeaders(token, vdc);
             for (String key : header.keySet()) {
                 builder = builder.header(key, header.get(key));
             }
 
-            response = builder.post(ClientResponse.class);
+            response = builder.post(Entity.entity(payload, MediaType.APPLICATION_JSON));
 
-            String result = response.getEntity(String.class);
+            String result = response.readEntity(String.class);
 
             log.debug("Status " + response.getStatus());
             if (response.getStatus() == 200 || response.getStatus() == 201 || response.getStatus() == 204) {
@@ -154,19 +156,19 @@ public class OpenstackFirewallingClientImpl implements FirewallingClient {
 
         try {
 
-            Client client = new Client();
-            ClientResponse response = null;
+            Client client = ClientBuilder.newClient();
+            Response response;
 
-            WebResource wr = client.resource(url);
-            Builder builder = wr.accept(MediaType.APPLICATION_JSON).type(MediaType.APPLICATION_JSON).entity(payload);
+            WebTarget wr = client.target(url);
+            Invocation.Builder builder = wr.request(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON);
 
             Map<String, String> header = getHeaders(token, vdc);
             for (String key : header.keySet()) {
                 builder = builder.header(key, header.get(key));
             }
-            response = builder.post(ClientResponse.class);
+            response = builder.post(Entity.entity(payload, MediaType.APPLICATION_JSON));
 
-            String result = response.getEntity(String.class);
+            String result = response.readEntity(String.class);
 
             log.debug("Status " + response.getStatus());
 
@@ -212,20 +214,20 @@ public class OpenstackFirewallingClientImpl implements FirewallingClient {
 
         try {
 
-            Client client = new Client();
+            Client client = ClientBuilder.newClient();
             log.debug("url: " + url);
-            ClientResponse response = null;
+            Response response;
 
-            WebResource wr = client.resource(url);
-            Builder builder = wr.accept(MediaType.APPLICATION_JSON).type(MediaType.APPLICATION_JSON);
+            WebTarget wr = client.target(url);
+            Invocation.Builder builder = wr.request(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON);
 
             Map<String, String> header = getHeaders(token, vdc);
             for (String key : header.keySet()) {
                 builder = builder.header(key, header.get(key));
             }
 
-            response = builder.delete(ClientResponse.class);
-            String result = response.getEntity(String.class);
+            response = builder.delete();
+            String result = response.readEntity(String.class);
 
             log.debug("Status " + response.getStatus());
 
@@ -265,21 +267,21 @@ public class OpenstackFirewallingClientImpl implements FirewallingClient {
 
         try {
 
-            Client client = new Client();
+            Client client = ClientBuilder.newClient();
 
-            ClientResponse response = null;
+            Response response;
 
-            WebResource wr = client.resource(url);
-            Builder builder = wr.accept(MediaType.APPLICATION_JSON).type(MediaType.APPLICATION_JSON);
+            WebTarget wr = client.target(url);
+            Invocation.Builder builder = wr.request(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON);
 
             Map<String, String> header = getHeaders(token, vdc);
             for (String key : header.keySet()) {
                 builder = builder.header(key, header.get(key));
             }
 
-            response = builder.delete(ClientResponse.class);
+            response = builder.delete();
 
-            String result = response.getEntity(String.class);
+            String result = response.readEntity(String.class);
 
             log.debug("Status " + response.getStatus());
 
@@ -347,18 +349,18 @@ public class OpenstackFirewallingClientImpl implements FirewallingClient {
         url = getNovaEndPoint(region, token) + vdc + "/os-security-groups";
         log.debug("actionUri: " + url);
 
-        Client client = new Client();
-        ClientResponse response = null;
+        Client client = ClientBuilder.newClient();
+        Response response;
 
-        WebResource wr = client.resource(url);
-        Builder builder = wr.accept(MediaType.APPLICATION_JSON).type(MediaType.APPLICATION_JSON);
+        WebTarget wr = client.target(url);
+        Invocation.Builder builder = wr.request(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON);
 
         Map<String, String> header = getHeaders(token, vdc);
         for (String key : header.keySet()) {
             builder = builder.header(key, header.get(key));
         }
-        response = builder.get(ClientResponse.class);
-        String responseEntity = response.getEntity(String.class);
+        response = builder.get();
+        String responseEntity = response.readEntity(String.class);
 
         if (response.getStatus() != 200) {
             String message = "Error calling OpenStack to recover all secGroups. " + "Status " + response.getStatus()
@@ -390,18 +392,18 @@ public class OpenstackFirewallingClientImpl implements FirewallingClient {
 
         try {
 
-            Client client = new Client();
-            ClientResponse response = null;
+            Client client = ClientBuilder.newClient();
+            Response response;
 
-            WebResource wr = client.resource(url);
-            Builder builder = wr.accept(MediaType.APPLICATION_JSON).type(MediaType.APPLICATION_JSON);
+            WebTarget wr = client.target(url);
+            Invocation.Builder builder = wr.request(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON);
 
             Map<String, String> header = getHeaders(token, vdc);
             for (String key : header.keySet()) {
                 builder = builder.header(key, header.get(key));
             }
-            response = builder.get(ClientResponse.class);
-            String stringSecurityGroup = response.getEntity(String.class);
+            response = builder.get();
+            String stringSecurityGroup = response.readEntity(String.class);
             JSONObject jsonsecurityGroup = JSONObject.fromObject(stringSecurityGroup);
 
             String jsonSecGroup = jsonsecurityGroup.getString("security_group");

@@ -25,7 +25,6 @@
 package com.telefonica.euro_iaas.paasmanager.manager.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -59,8 +58,8 @@ import com.telefonica.euro_iaas.paasmanager.model.Attribute;
 import com.telefonica.euro_iaas.paasmanager.model.ClaudiaData;
 import com.telefonica.euro_iaas.paasmanager.model.Environment;
 import com.telefonica.euro_iaas.paasmanager.model.EnvironmentInstance;
-import com.telefonica.euro_iaas.paasmanager.model.Network;
 import com.telefonica.euro_iaas.paasmanager.model.InstallableInstance.Status;
+import com.telefonica.euro_iaas.paasmanager.model.Network;
 import com.telefonica.euro_iaas.paasmanager.model.ProductInstance;
 import com.telefonica.euro_iaas.paasmanager.model.ProductRelease;
 import com.telefonica.euro_iaas.paasmanager.model.Tier;
@@ -126,13 +125,12 @@ public class EnvironmentInstanceManagerImpl implements EnvironmentInstanceManage
 
         environmentInstance = insertEnvironmentInstanceInDatabase(environmentInstance);
 
-     
         if (environment.isNetworkFederated()) {
             log.info(" yes Is the environmetn federated ");
             try {
-            updateFederatedNetworks (claudiaData,environment);
+                updateFederatedNetworks(claudiaData, environment);
             } catch (Exception e) {
-            	log.warn ("It is not possible to update the federates networks");
+                log.warn("It is not possible to update the federates networks");
             }
         }
 
@@ -210,32 +208,33 @@ public class EnvironmentInstanceManagerImpl implements EnvironmentInstanceManage
 
         return environmentInstance;
     }
-    
-    public void updateFederatedNetworks (ClaudiaData claudiaData, Environment environment ) throws InfrastructureException, EntityNotFoundException, InvalidEntityException {
-    	log.info(" Update the federated network ");
+
+    public void updateFederatedNetworks(ClaudiaData claudiaData, Environment environment)
+            throws InfrastructureException, EntityNotFoundException, InvalidEntityException {
+        log.info(" Update the federated network ");
         Set<String> fedeNetwork = environment.getFederatedNetworks();
         String range = null;
-               
+
         Map<String, Set<String>> map = environment.getNetworksRegion();
 
-        for (String net: fedeNetwork) {
-        	log.info ("Updating tier for net " + net);
-        	Set<String> regions = map.get(net);
-        	for (String region: regions) {
-        		log.info ("Updating tier for net " + net + " a region " + region);
-        		Network network = networkManager.load(net, claudiaData.getVdc(), region);
-        		network.setFederatedNetwork(true);
-        		if (range == null) {
-        			range = infrastructureManager.getFederatedRange(claudiaData, region);
-        			log.info ("Updating tier for net " + net + " a region " + region + " " + range);
-        			network.setFederatedRange(range+".0/26");
-        			log.info (" Federate range " + range+".0/26");
-        		} else {
-        			network.setFederatedRange(range+".64/26");
-        			log.info (" Federate range " + range+".64/26");
-        		}        		
-        		networkManager.update(network);
-        	}
+        for (String net : fedeNetwork) {
+            log.info("Updating tier for net " + net);
+            Set<String> regions = map.get(net);
+            for (String region : regions) {
+                log.info("Updating tier for net " + net + " a region " + region);
+                Network network = networkManager.load(net, claudiaData.getVdc(), region);
+                network.setFederatedNetwork(true);
+                if (range == null) {
+                    range = infrastructureManager.getFederatedRange(claudiaData, region);
+                    log.info("Updating tier for net " + net + " a region " + region + " " + range);
+                    network.setFederatedRange(range + ".0/26");
+                    log.info(" Federate range " + range + ".0/26");
+                } else {
+                    network.setFederatedRange(range + ".64/26");
+                    log.info(" Federate range " + range + ".64/26");
+                }
+                networkManager.update(network);
+            }
 
         }
     }
@@ -261,7 +260,7 @@ public class EnvironmentInstanceManagerImpl implements EnvironmentInstanceManage
             Tier tier = tierManager.loadTierWithProductReleaseAndMetadata(tierInstance.getTier().getName(),
                     tierInstance.getTier().getEnviromentName(), tierInstance.getTier().getVdc());
             log.info("The tier " + tier.getName() + " is in bd " + tier.getRegion());
-            log.info(tier.getProductReleases().toString());
+
             if ((tier.getProductReleases() != null) && !(tier.getProductReleases().isEmpty())) {
 
                 for (ProductRelease productRelease : tier.getProductReleases()) {
@@ -328,7 +327,7 @@ public class EnvironmentInstanceManagerImpl implements EnvironmentInstanceManage
         try {
             instance = environmentInstanceDao.load(name, vdc);
         } catch (Exception e) {
-            log.info("error to finde enviornmetn instaqnce " + e.getMessage());
+            log.info("error to find environment instance " + e.getMessage());
             throw new EntityNotFoundException(EnvironmentInstance.class, "vdc", vdc);
         }
         if (!instance.getVdc().equals(vdc)) {
@@ -407,7 +406,7 @@ public class EnvironmentInstanceManagerImpl implements EnvironmentInstanceManage
 
                     infrastructureManager.deleteEnvironment(claudiaData, envInstance);
 
-                } catch (InfrastructureException e) {
+                } catch (Exception e) {
                     log.error("It is not possible to delete the environment " + envInstance.getName() + " : "
                             + e.getMessage());
                     throw new InvalidEntityException(EnvironmentInstance.class, e);
@@ -459,16 +458,13 @@ public class EnvironmentInstanceManagerImpl implements EnvironmentInstanceManage
         if (systemPropertiesProvider.getProperty(SystemPropertiesProvider.CLOUD_SYSTEM).equals("FIWARE")) {
             try {
                 environment = environmentManager.load(env.getName(), env.getVdc());
-                if (environment.getOvf() == null && env.getOvf() != null) {
-                    environment.setOvf(env.getOvf());
-                    environment = environmentManager.update(environment);
-                }
-
+                log.info ("afeter obtainin environment");
+                
                 Set<Tier> tiers = new HashSet();
                 for (Tier tier : env.getTiers()) {
                     Tier tierDB = tierManager.loadTierWithNetworks(tier.getName(), env.getVdc(), env.getName());
-                    log.info ("tier " + tier.getName() + " " + env.getVdc() + " " + tier.getRegion());
-                    log.info ("tierDB " + tierDB.getName() + " " + env.getVdc() + " " + tierDB.getRegion());
+                    log.info("tier " + tier.getName() + " " + env.getVdc() + " " + tier.getRegion());
+                    log.info("tierDB " + tierDB.getName() + " " + env.getVdc() + " " + tierDB.getRegion());
                     tierDB = updateTierDB(tierDB, tier);
                     tierDB = tierManager.update(tierDB);
 
@@ -490,7 +486,8 @@ public class EnvironmentInstanceManagerImpl implements EnvironmentInstanceManage
                 environment.setTiers(tiers);
 
                 return environment;
-            } catch (EntityNotFoundException e1) {
+            } catch (Exception e1) {
+            	log.warn ("Error to load env " + e1.getMessage());
                 throw new EntityNotFoundException(Environment.class,
                         "The environment should have been already created", e1);
             }
@@ -644,8 +641,8 @@ public class EnvironmentInstanceManagerImpl implements EnvironmentInstanceManage
     public void setProductReleaseManager(ProductReleaseManager productReleaseManager) {
         this.productReleaseManager = productReleaseManager;
     }
-    
-    public void setNetworkManager (NetworkManager networkManager) {
-    	this.networkManager = networkManager;
-    } 
+
+    public void setNetworkManager(NetworkManager networkManager) {
+        this.networkManager = networkManager;
+    }
 }

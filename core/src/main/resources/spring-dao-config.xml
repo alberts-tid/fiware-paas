@@ -19,7 +19,7 @@
           class="com.telefonica.euro_iaas.paasmanager.dao.impl.ArtifactDaoJpaImpl"/>
     <bean id="tierDao" lazy-init="true"
           class="com.telefonica.euro_iaas.paasmanager.dao.impl.TierDaoJpaImpl"/>
-    <bean id="environmentDao" lazy-init="true"
+    <bean id="environmentDao" lazy-init="false"
           class="com.telefonica.euro_iaas.paasmanager.dao.impl.EnvironmentDaoJpaImpl"/>
     <bean id="tierInstanceDao" lazy-init="true"
           class="com.telefonica.euro_iaas.paasmanager.dao.impl.TierInstanceDaoJpaImpl"/>

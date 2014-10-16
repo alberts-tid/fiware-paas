@@ -122,7 +122,15 @@ public class EnvironmentManagerImpl implements EnvironmentManager {
         if (vdc == null || vdc.isEmpty()) {
             return environmentDao.load(name);
         } else {
-            return environmentDao.load(name, vdc);
+        	try {
+        		
+        		Environment env = environmentDao.load(name, vdc);
+        		log.info("in load before rturn");
+                return env;
+        	} catch (Exception e) {
+        		log.info("error in load " + e.getMessage());
+        		throw new EntityNotFoundException(Environment.class, "name", name);
+        	}
         }
     }
 

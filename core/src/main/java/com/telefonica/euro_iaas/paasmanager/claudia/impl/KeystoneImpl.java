@@ -24,15 +24,17 @@
 
 package com.telefonica.euro_iaas.paasmanager.claudia.impl;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.WebResource.Builder;
 import com.telefonica.euro_iaas.paasmanager.claudia.KeystoneClient;
 import com.telefonica.euro_iaas.paasmanager.exception.OpenStackException;
 import com.telefonica.euro_iaas.paasmanager.util.SystemPropertiesProvider;
@@ -50,18 +52,19 @@ public class KeystoneImpl implements KeystoneClient {
                 + systemPropertiesProvider.getProperty("openstack.version") + "/tokens";
         log.debug("actionUri: " + url);
 
-        Client client = new Client();
-        ClientResponse response = null;
+        Client client = ClientBuilder.newClient();
+        Response response;
 
-        WebResource wr = client.resource(url);
+        WebTarget wr = client.target(url);
 
         String payload = "{\"auth\":{\"passwordCredentials\":{\"username\": \"admin\", \"password\": \"openstack\"}, \"tenantName\": "
                 + "\"" + tenantId + "\"}}";
 
-        Builder builder = wr.accept(MediaType.APPLICATION_JSON).type(MediaType.APPLICATION_JSON).entity(payload);
+        Invocation.Builder builder = wr.request(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON);
+
         builder = builder.header("Content-type", "application/json");
 
-        response = builder.post(ClientResponse.class);
+        response = builder.post(Entity.entity(payload, MediaType.APPLICATION_JSON));
 
         if (response.getStatus() != 200) {
             String message = "Error calling OpenStack to an valid token. " + "Status " + response.getStatus();
@@ -69,7 +72,7 @@ public class KeystoneImpl implements KeystoneClient {
         }
         int i = payload.indexOf("token");
         int j = payload.indexOf(">", i);
-        String respone = response.getEntity(String.class);
+        String respone = response.readEntity(String.class);
         String token = respone.substring(i - 1, j + 1);
 
         // token = "<token expires=\"2012-11-13T15:01:51Z\" id=\"783bec9d7d734f1e943986485a90966d\">";

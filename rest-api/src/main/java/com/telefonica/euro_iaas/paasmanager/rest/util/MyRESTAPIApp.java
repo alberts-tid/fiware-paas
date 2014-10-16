@@ -21,22 +21,20 @@
  * For those usages not covered by the Apache version 2.0 License please contact with opensource@tid.es
  * </p>
  */
-package com.telefonica.euro_iaas.paasmanager.util;
 
-public interface Configuration {
-    
-    String TASK_PATH = "/rest/vdc/{1}/task/{0}";
-  
-    String ENVIRONMENT_PATH = "/rest/catalog/environment/{0}";
-    String ENVIRONMENT_INSTANCE_PATH = "/rest/vdc/{0}/environmentInstance/{1}";
-    String PRODUCT_INSTANCE_PATH = "/rest/vdc/{4}/product/{0}";
-    String PRODUCT_RELEASE_PATH = "/rest/product/{0}";
-    String APPLICATION_RELEASE_PATH = "/rest/application/{0}";
-    
-    String SDC_SERVER_MEDIATYPE = "application/xml";
-    
-    long OPENSTACK_SYNCHRONIZATION_POLLING_PERIOD = 84000000;
-    String VALIDATION_TIME_THRESHOLD = "84000000";
+package com.telefonica.euro_iaas.paasmanager.rest.util;
 
+import org.glassfish.jersey.jackson.JacksonFeature;
+import org.glassfish.jersey.server.ResourceConfig;
+
+import com.telefonica.euro_iaas.paasmanager.util.MyObjectMapperProvider;
+
+public class MyRESTAPIApp extends ResourceConfig {
+    public MyRESTAPIApp() {
+
+        register(MyObjectMapperProvider.class);
+        register(JacksonFeature.class);
+        register(org.glassfish.jersey.filter.LoggingFilter.class);
+        property("jersey.config.beanValidation.enableOutputValidationErrorEntity.server", "true");
+    }
 }
-

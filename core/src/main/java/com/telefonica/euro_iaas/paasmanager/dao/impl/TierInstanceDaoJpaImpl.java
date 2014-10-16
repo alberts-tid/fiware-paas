@@ -138,11 +138,31 @@ public class TierInstanceDaoJpaImpl extends AbstractBaseDao<TierInstance, String
 
     public TierInstance findByTierInstanceName(String tierInstanceName) throws EntityNotFoundException {
         Query query = getEntityManager().createQuery(
-                "select p from TierInstance p join " + "fetch p.productInstances where p.name = :name");
+                "select p from TierInstance p left join fetch p.productInstances where p.name = :name");
         query.setParameter("name", tierInstanceName);
         TierInstance tierInstance = null;
         try {
             tierInstance = (TierInstance) query.getResultList().get(0);
+            tierInstance.getNetworkInstances();
+            getEntityManager().flush();
+            
+        } catch (Exception e) {
+            throw new EntityNotFoundException(TierInstance.class, "name", tierInstanceName);
+
+        }
+        return tierInstance;
+    }
+    
+    public TierInstance findByTierInstanceNameNetworkInst(String tierInstanceName) throws EntityNotFoundException {
+        Query query = getEntityManager().createQuery(
+                "select p from TierInstance p left join fetch p.networkInstances where p.name = :name");
+        query.setParameter("name", tierInstanceName);
+        TierInstance tierInstance = null;
+        try {
+            tierInstance = (TierInstance) query.getResultList().get(0);
+            tierInstance.getNetworkInstances();
+            getEntityManager().flush();
+            
         } catch (Exception e) {
             throw new EntityNotFoundException(TierInstance.class, "name", tierInstanceName);
 

@@ -32,22 +32,23 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import junit.framework.TestCase;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
 import com.telefonica.euro_iaas.paasmanager.exception.OpenStackException;
-
 import com.telefonica.euro_iaas.paasmanager.util.RegionCache;
 import com.telefonica.euro_iaas.paasmanager.util.SystemPropertiesProvider;
 
-public class OpenStackRegionImplTest extends TestCase{
+public class OpenStackRegionImplTest  {
 
     final String RESPONSE_JSON_GRIZZLY_TWO_REGIONS = "{\n" + "   \"endpoints_links\":[\n" + "\n" + "   ],\n"
             + "   \"endpoints\":[\n" + "      {\n" + "         \"name\":\"nova\",\n"
@@ -69,11 +70,11 @@ public class OpenStackRegionImplTest extends TestCase{
             + "         \"type\":\"compute\",\n" + "         \"id\":\"0a3419563dcd4e02b8cd8c865a3bc2ed\",\n"
             + "         \"publicURL\":\"http://130.206.80.58:8774/v2/67c979f51c5b4e89b85c1f876bdffe31\"\n"
             + "         },\n" + "      {\n" + "         \"name\":\"federatednetwork\",\n"
-                + "         \"adminURL\":\"http://130.206.80.58:8774/v2/67c979f51c5b4e89b85c1f876bdffe31\",\n"
-                + "         \"region\":\"RegionOne\",\n"
-                + "         \"internalURL\":\"http://130.206.80.58:8774/v2/67c979f51c5b4e89b85c1f876bdffe31\",\n"
-                + "         \"type\":\"compute\",\n" + "         \"id\":\"0a3419563dcd4e02b8cd8c865a3bc2ed\",\n"
-                + "         \"publicURL\":\"http://130.206.80.58:8774/v2/67c979f51c5b4e89b85c1f876bdffe31\"\n"
+            + "         \"adminURL\":\"http://130.206.80.58:8774/v2/67c979f51c5b4e89b85c1f876bdffe31\",\n"
+            + "         \"region\":\"RegionOne\",\n"
+            + "         \"internalURL\":\"http://130.206.80.58:8774/v2/67c979f51c5b4e89b85c1f876bdffe31\",\n"
+            + "         \"type\":\"compute\",\n" + "         \"id\":\"0a3419563dcd4e02b8cd8c865a3bc2ed\",\n"
+            + "         \"publicURL\":\"http://130.206.80.58:8774/v2/67c979f51c5b4e89b85c1f876bdffe31\"\n"
             + "      },\n" + "      {\n" + "         \"name\":\"quantum\",\n"
             + "         \"adminURL\":\"http://130.206.80.58:9696/\",\n" + "         \"region\":\"RegionOne\",\n"
             + "         \"internalURL\":\"http://130.206.80.58:9696/\",\n" + "         \"type\":\"network\",\n"
@@ -244,10 +245,10 @@ public class OpenStackRegionImplTest extends TestCase{
             + "         \"roles_links\":[\n" + "\n" + "         ],\n"
             + "         \"id\":\"080416ca0dea4d5b8c007d3b53ec91a1\",\n" + "         \"roles\":[\n" + "\n"
             + "         ],\n" + "         \"name\":\"henar\"\n" + "      }\n" + "   }\n" + "}";
-    
-    SystemPropertiesProvider systemPropertiesProvider ;
-    WebResource.Builder builder;
-    ClientResponse clientResponse;
+
+    SystemPropertiesProvider systemPropertiesProvider;
+    Invocation.Builder builder;
+    Response clientResponse;
     OpenStackRegionImpl openStackRegion;
 
     @Before
@@ -257,26 +258,27 @@ public class OpenStackRegionImplTest extends TestCase{
         regionCache.clear();
         openStackRegion = new OpenStackRegionImpl();
         Client client = mock(Client.class);
-        WebResource webResource = mock(WebResource.class);
-        builder = mock(WebResource.Builder.class);
-        when(webResource.accept(MediaType.APPLICATION_JSON)).thenReturn(builder);
-        when(builder.type(MediaType.APPLICATION_JSON)).thenReturn(builder);
-        when(builder.entity(anyString())).thenReturn(builder);
-        clientResponse = mock(ClientResponse.class);
-        ClientResponse clientResponseAdmin = mock(ClientResponse.class);
-        
-        when(client.resource(anyString())).thenReturn(webResource);
+        WebTarget webResource = mock(WebTarget.class);
+        builder = mock(Invocation.Builder.class);
+        clientResponse = mock(Response.class);
+        Response clientResponseAdmin = mock(Response.class);
+
+        // when
+        when(webResource.request(MediaType.APPLICATION_JSON)).thenReturn(builder);
+        when(builder.accept(MediaType.APPLICATION_JSON)).thenReturn(builder);
+
+        when(client.target(anyString())).thenReturn(webResource);
         openStackRegion.setClient(client);
         systemPropertiesProvider = mock(SystemPropertiesProvider.class);
         openStackRegion.setSystemPropertiesProvider(systemPropertiesProvider);
-        
-        String responseJSON = "{\"access\": {\"token\": {\"issued_at\": \"2014-01-13T14:00:10.103025\", \"expires\": \"2014-01-14T14:00:09Z\","+
-        "\"id\": \"ec3ecab46f0c4830ad2a5837fd0ad0d7\", \"tenant\": { \"description\": null, \"enabled\": true, \"id\": \"08bed031f6c54c9d9b35b42aa06b51c0\","+
-        "\"name\": \"admin\" } },         \"serviceCatalog\": []}}}";
-        
-        when(builder.post(ClientResponse.class)).thenReturn(clientResponseAdmin);
+
+        String responseJSON = "{\"access\": {\"token\": {\"issued_at\": \"2014-01-13T14:00:10.103025\", \"expires\": \"2014-01-14T14:00:09Z\","
+                + "\"id\": \"ec3ecab46f0c4830ad2a5837fd0ad0d7\", \"tenant\": { \"description\": null, \"enabled\": true, \"id\": \"08bed031f6c54c9d9b35b42aa06b51c0\","
+                + "\"name\": \"admin\" } },         \"serviceCatalog\": []}}}";
+
+        when(builder.post(Entity.entity(anyString(), MediaType.APPLICATION_JSON))).thenReturn(clientResponseAdmin);
         when(clientResponseAdmin.getStatus()).thenReturn(200);
-        when(clientResponseAdmin.getEntity(String.class)).thenReturn(responseJSON);
+        when(clientResponseAdmin.readEntity(String.class)).thenReturn(responseJSON);
 
     }
 
@@ -284,44 +286,36 @@ public class OpenStackRegionImplTest extends TestCase{
     public void testShouldGetTokenAdmin() throws OpenStackException {
         // given
 
-        
-      
         String token = "123123232";
-        
+
         String url = "http://domain.com/v2.0/tokens/" + token + "/endpoints";
 
         // when
         when(systemPropertiesProvider.getProperty(SystemPropertiesProvider.KEYSTONE_URL)).thenReturn(
                 "http://domain.com/v2.0/");
-        when(systemPropertiesProvider.getProperty(SystemPropertiesProvider.KEYSTONE_USER)).thenReturn(
-        "admin");
-        when(systemPropertiesProvider.getProperty(SystemPropertiesProvider.KEYSTONE_PASS)).thenReturn(
-        "admin");
-        when(systemPropertiesProvider.getProperty(SystemPropertiesProvider.KEYSTONE_TENANT)).thenReturn(
-        "admin");
+        when(systemPropertiesProvider.getProperty(SystemPropertiesProvider.KEYSTONE_USER)).thenReturn("admin");
+        when(systemPropertiesProvider.getProperty(SystemPropertiesProvider.KEYSTONE_PASS)).thenReturn("admin");
+        when(systemPropertiesProvider.getProperty(SystemPropertiesProvider.KEYSTONE_TENANT)).thenReturn("admin");
         String tokenAdmin = openStackRegion.getTokenAdmin();
         // then
         assertNotNull(tokenAdmin);
         assertEquals("ec3ecab46f0c4830ad2a5837fd0ad0d7", tokenAdmin);
     }
-    
+
     @Test
     public void testShouldGetEndPointsForNovaAndARegionName() throws OpenStackException {
         // given
-
-        
 
         String regionName = "RegionOne";
         String token = "123123232";
         String responseJSON = "{\"endpoints_links\": [], \"endpoints\": [{\"name\": \"nova\", \"adminURL\": \"http://130.206.80.63:8774/v2/67c979f51c5b4e89b85c1f876bdffe31\", \"region\": \"RegionTestbed\", \"internalURL\": \"http://130.206.80.63:8774/v2/67c979f51c5b4e89b85c1f876bdffe31\", \"type\": \"compute\", \"id\": \"34bb28b56ce4434f8fc2b85ca16bbda6\", \"publicURL\": \"http://130.206.80.63:8774/v2/67c979f51c5b4e89b85c1f876bdffe31\"}, {\"name\": \"quantum\", \"adminURL\": \"http://130.206.80.63:8774/v2/67c979f51c5b4e89b85c1f876bdffe31\", \"region\": \"RegionTestbed\", \"internalURL\": \"http://130.206.80.63:8774/v2/67c979f51c5b4e89b85c1f876bdffe31\", \"type\": \"network\", \"id\": \"06fe0f86353441cdb5b0664fe5abf0ca\", \"publicURL\": \"http://130.206.80.63:8774/v2/67c979f51c5b4e89b85c1f876bdffe31\"}, {\"name\": \"nova\", \"adminURL\": \"http://130.206.80.58:8774/v2/67c979f51c5b4e89b85c1f876bdffe31\", \"region\": \"RegionOne\", \"internalURL\": \"http://130.206.80.58:8774/v2/67c979f51c5b4e89b85c1f876bdffe31\", \"type\": \"compute\", \"id\": \"0a3419563dcd4e02b8cd8c865a3bc2ed\", \"publicURL\": \"http://130.206.80.58:8774/v2/67c979f51c5b4e89b85c1f876bdffe31\"}, {\"name\": \"quantum\", \"adminURL\": \"http://130.206.80.58:9696/\", \"region\": \"RegionOne\", \"internalURL\": \"http://130.206.80.58:9696/\", \"type\": \"network\", \"id\": \"49d2f93d15904ff091f45b7752001057\", \"publicURL\": \"http://130.206.80.58:9696/\"}, {\"name\": \"glance\", \"adminURL\": \"http://130.206.80.58:9292/v2\", \"region\": \"RegionOne\", \"internalURL\": \"http://130.206.80.58:9292/v2\", \"type\": \"image\", \"id\": \"24b9ab9c337b4ee38548a8f2e73d291b\", \"publicURL\": \"http://130.206.80.58:9292/v2\"}, {\"name\": \"cinder\", \"adminURL\": \"http://130.206.80.58:8776/v1/67c979f51c5b4e89b85c1f876bdffe31\", \"region\": \"RegionOne\", \"internalURL\": \"http://130.206.80.58:8776/v1/67c979f51c5b4e89b85c1f876bdffe31\", \"type\": \"volume\", \"id\": \"4fd6f49485cc443d91d4e8b12b0518c5\", \"publicURL\": \"http://130.206.80.58:8776/v1/67c979f51c5b4e89b85c1f876bdffe31\"}, {\"name\": \"ec2\", \"adminURL\": \"http://130.206.80.58:8773/services/Admin\", \"region\": \"RegionOne\", \"internalURL\": \"http://130.206.80.58:8773/services/Cloud\", \"type\": \"ec2\", \"id\": \"0ca7cd26fad842e0b06a29f2c627fa43\", \"publicURL\": \"http://130.206.80.58:8773/services/Cloud\"}, {\"name\": \"keystone\", \"adminURL\": \"http://130.206.80.58:35357/v2.0\", \"region\": \"RegionOne\", \"internalURL\": \"http://130.206.80.58:5000/v2.0\", \"type\": \"identity\", \"id\": \"43c29c831357416c87f9068d95c73eca\", \"publicURL\": \"http://130.206.80.58:5000/v2.0\"}]}";
 
-
         // when
         when(systemPropertiesProvider.getProperty(SystemPropertiesProvider.KEYSTONE_URL)).thenReturn(
                 "http://domain.com/v2.0/");
-        when(builder.get(ClientResponse.class)).thenReturn(clientResponse);
+        when(builder.get()).thenReturn(clientResponse);
         when(clientResponse.getStatus()).thenReturn(200);
-        when(clientResponse.getEntity(String.class)).thenReturn(responseJSON);
+        when(clientResponse.readEntity(String.class)).thenReturn(responseJSON);
 
         String resultURL = openStackRegion.getNovaEndPoint(regionName, token);
         // then
@@ -333,21 +327,17 @@ public class OpenStackRegionImplTest extends TestCase{
     public void testShouldGetEndPointsForQuantumAndARegionName() throws OpenStackException {
         // given
 
-       
-
         String regionName = "RegionOne";
         String token = "123123232";
         String responseJSON = "{\"endpoints_links\": [], \"endpoints\": [{\"name\": \"nova\", \"adminURL\": \"http://130.206.80.63:8774/v2/67c979f51c5b4e89b85c1f876bdffe31\", \"region\": \"RegionTestbed\", \"internalURL\": \"http://130.206.80.63:8774/v2/67c979f51c5b4e89b85c1f876bdffe31\", \"type\": \"compute\", \"id\": \"34bb28b56ce4434f8fc2b85ca16bbda6\", \"publicURL\": \"http://130.206.80.63:8774/v2/67c979f51c5b4e89b85c1f876bdffe31\"}, {\"name\": \"quantum\", \"adminURL\": \"http://130.206.80.63:8774/v2/67c979f51c5b4e89b85c1f876bdffe31\", \"region\": \"RegionTestbed\", \"internalURL\": \"http://130.206.80.63:8774/v2/67c979f51c5b4e89b85c1f876bdffe31\", \"type\": \"network\", \"id\": \"06fe0f86353441cdb5b0664fe5abf0ca\", \"publicURL\": \"http://130.206.80.63:8774/v2/67c979f51c5b4e89b85c1f876bdffe31\"}, {\"name\": \"nova\", \"adminURL\": \"http://130.206.80.58:8774/v2/67c979f51c5b4e89b85c1f876bdffe31\", \"region\": \"RegionOne\", \"internalURL\": \"http://130.206.80.58:8774/v2/67c979f51c5b4e89b85c1f876bdffe31\", \"type\": \"compute\", \"id\": \"0a3419563dcd4e02b8cd8c865a3bc2ed\", \"publicURL\": \"http://130.206.80.58:8774/v2/67c979f51c5b4e89b85c1f876bdffe31\"}, {\"name\": \"quantum\", \"adminURL\": \"http://130.206.80.58:9696/\", \"region\": \"RegionOne\", \"internalURL\": \"http://130.206.80.58:9696/\", \"type\": \"network\", \"id\": \"49d2f93d15904ff091f45b7752001057\", \"publicURL\": \"http://130.206.80.58:9696/\"}, {\"name\": \"glance\", \"adminURL\": \"http://130.206.80.58:9292/v2\", \"region\": \"RegionOne\", \"internalURL\": \"http://130.206.80.58:9292/v2\", \"type\": \"image\", \"id\": \"24b9ab9c337b4ee38548a8f2e73d291b\", \"publicURL\": \"http://130.206.80.58:9292/v2\"}, {\"name\": \"cinder\", \"adminURL\": \"http://130.206.80.58:8776/v1/67c979f51c5b4e89b85c1f876bdffe31\", \"region\": \"RegionOne\", \"internalURL\": \"http://130.206.80.58:8776/v1/67c979f51c5b4e89b85c1f876bdffe31\", \"type\": \"volume\", \"id\": \"4fd6f49485cc443d91d4e8b12b0518c5\", \"publicURL\": \"http://130.206.80.58:8776/v1/67c979f51c5b4e89b85c1f876bdffe31\"}, {\"name\": \"ec2\", \"adminURL\": \"http://130.206.80.58:8773/services/Admin\", \"region\": \"RegionOne\", \"internalURL\": \"http://130.206.80.58:8773/services/Cloud\", \"type\": \"ec2\", \"id\": \"0ca7cd26fad842e0b06a29f2c627fa43\", \"publicURL\": \"http://130.206.80.58:8773/services/Cloud\"}, {\"name\": \"keystone\", \"adminURL\": \"http://130.206.80.58:35357/v2.0\", \"region\": \"RegionOne\", \"internalURL\": \"http://130.206.80.58:5000/v2.0\", \"type\": \"identity\", \"id\": \"43c29c831357416c87f9068d95c73eca\", \"publicURL\": \"http://130.206.80.58:5000/v2.0\"}]}";
         String url = "http://domain.com/v2.0/tokens/" + token + "/endpoints";
 
-        
-
         // when
         when(systemPropertiesProvider.getProperty(SystemPropertiesProvider.KEYSTONE_URL)).thenReturn(
                 "http://domain.com/v2.0/");
-        when(builder.get(ClientResponse.class)).thenReturn(clientResponse);
+        when(builder.get()).thenReturn(clientResponse);
         when(clientResponse.getStatus()).thenReturn(200);
-        when(clientResponse.getEntity(String.class)).thenReturn(responseJSON);
+        when(clientResponse.readEntity(String.class)).thenReturn(responseJSON);
 
         String resultURL = openStackRegion.getQuantumEndPoint(regionName, token);
         // then
@@ -363,9 +353,9 @@ public class OpenStackRegionImplTest extends TestCase{
         when(systemPropertiesProvider.getProperty(SystemPropertiesProvider.KEYSTONE_URL)).thenReturn(
                 "http://domain.com/v2.0/");
 
-        when(builder.get(ClientResponse.class)).thenReturn(clientResponse);
+        when(builder.get()).thenReturn(clientResponse);
         when(clientResponse.getStatus()).thenReturn(200);
-        when(clientResponse.getEntity(String.class)).thenReturn(RESPONSE_JSON_GRIZZLY_TWO_REGIONS);
+        when(clientResponse.readEntity(String.class)).thenReturn(RESPONSE_JSON_GRIZZLY_TWO_REGIONS);
         List<String> result = openStackRegion.getRegionNames("token");
 
         // then
@@ -392,32 +382,31 @@ public class OpenStackRegionImplTest extends TestCase{
 
         String urlEssex = "http://domain.com/v2.0/tokens";
 
-        WebResource webResource = mock(WebResource.class);
-        WebResource webResourceEssex = mock(WebResource.class);
-        WebResource.Builder builder = mock(WebResource.Builder.class);
-        WebResource.Builder builderEssex = mock(WebResource.Builder.class);
+        WebTarget webResource = mock(WebTarget.class);
+        WebTarget webResourceEssex = mock(WebTarget.class);
+        Invocation.Builder builder = mock(Invocation.Builder.class);
+        Invocation.Builder builderEssex = mock(Invocation.Builder.class);
 
-        ClientResponse clientResponse = mock(ClientResponse.class);
-        ClientResponse clientResponseEssex = mock(ClientResponse.class);
+        Response clientResponse = mock(Response.class);
+        Response clientResponseEssex = mock(Response.class);
 
         // when
 
         when(systemPropertiesProvider.getProperty(SystemPropertiesProvider.KEYSTONE_URL)).thenReturn(
                 "http://domain.com/v2.0/");
-        when(client.resource(url)).thenReturn(webResource);
-        when(webResource.accept(MediaType.APPLICATION_JSON)).thenReturn(builder);
-        when(builder.get(ClientResponse.class)).thenReturn(clientResponse);
+        when(client.target(url)).thenReturn(webResource);
+        when(webResource.request(MediaType.APPLICATION_JSON)).thenReturn(builder);
+        when(builder.get()).thenReturn(clientResponse);
         when(clientResponse.getStatus()).thenReturn(501);
-        when(clientResponse.getEntity(String.class)).thenReturn(responseError);
+        when(clientResponse.readEntity(String.class)).thenReturn(responseError);
 
-        when(client.resource(urlEssex)).thenReturn(webResourceEssex);
-        when(webResourceEssex.accept(MediaType.APPLICATION_JSON)).thenReturn(builderEssex);
-        when(builderEssex.type(MediaType.APPLICATION_JSON)).thenReturn(builderEssex);
-        when(builderEssex.entity(anyString())).thenReturn(builderEssex);
+        when(client.target(urlEssex)).thenReturn(webResourceEssex);
+        when(webResourceEssex.request(MediaType.APPLICATION_JSON)).thenReturn(builderEssex);
+        when(builderEssex.accept(MediaType.APPLICATION_JSON)).thenReturn(builderEssex);
         when(builderEssex.header("Content-type", MediaType.APPLICATION_JSON)).thenReturn(builderEssex);
-        when(builderEssex.post(ClientResponse.class)).thenReturn(clientResponseEssex);
+        when(builderEssex.post(Entity.entity(anyString(), MediaType.APPLICATION_JSON))).thenReturn(clientResponseEssex);
         when(clientResponseEssex.getStatus()).thenReturn(200);
-        when(clientResponseEssex.getEntity(String.class)).thenReturn(RESPONSE_ESSEX);
+        when(clientResponseEssex.readEntity(String.class)).thenReturn(RESPONSE_ESSEX);
 
         List<String> result = openStackRegion.getRegionNames(token);
 
@@ -446,31 +435,30 @@ public class OpenStackRegionImplTest extends TestCase{
         String url = "http://domain.com/v2.0/tokens/" + token + "/endpoints";
         String urlEssex = "http://domain.com/v2.0/tokens";
 
-        WebResource webResource = mock(WebResource.class);
-        WebResource webResourceEssex = mock(WebResource.class);
-        WebResource.Builder builder = mock(WebResource.Builder.class);
-        WebResource.Builder builderEssex = mock(WebResource.Builder.class);
+        WebTarget webResource = mock(WebTarget.class);
+        WebTarget webResourceEssex = mock(WebTarget.class);
+        Invocation.Builder builder = mock(Invocation.Builder.class);
+        Invocation.Builder builderEssex = mock(Invocation.Builder.class);
 
-        ClientResponse clientResponse = mock(ClientResponse.class);
-        ClientResponse clientResponseEssex = mock(ClientResponse.class);
+        Response clientResponse = mock(Response.class);
+        Response clientResponseEssex = mock(Response.class);
 
         // when
         when(systemPropertiesProvider.getProperty(SystemPropertiesProvider.KEYSTONE_URL)).thenReturn(
                 "http://domain.com/v2.0/");
-        when(client.resource(url)).thenReturn(webResource);
-        when(webResource.accept(MediaType.APPLICATION_JSON)).thenReturn(builder);
-        when(builder.get(ClientResponse.class)).thenReturn(clientResponse);
+        when(client.target(url)).thenReturn(webResource);
+        when(webResource.request(MediaType.APPLICATION_JSON)).thenReturn(builder);
+        when(builder.get()).thenReturn(clientResponse);
         when(clientResponse.getStatus()).thenReturn(501);
-        when(clientResponse.getEntity(String.class)).thenReturn(responseError);
+        when(clientResponse.readEntity(String.class)).thenReturn(responseError);
 
-        when(client.resource(urlEssex)).thenReturn(webResourceEssex);
-        when(webResourceEssex.accept(MediaType.APPLICATION_JSON)).thenReturn(builderEssex);
-        when(builderEssex.type(MediaType.APPLICATION_JSON)).thenReturn(builderEssex);
-        when(builderEssex.entity(anyString())).thenReturn(builderEssex);
+        when(client.target(urlEssex)).thenReturn(webResourceEssex);
+        when(webResourceEssex.request(MediaType.APPLICATION_JSON)).thenReturn(builderEssex);
+        when(builderEssex.accept(MediaType.APPLICATION_JSON)).thenReturn(builderEssex);
         when(builderEssex.header("Content-type", MediaType.APPLICATION_JSON)).thenReturn(builderEssex);
-        when(builderEssex.post(ClientResponse.class)).thenReturn(clientResponseEssex);
+        when(builderEssex.post(Entity.entity(anyString(), MediaType.APPLICATION_JSON))).thenReturn(clientResponseEssex);
         when(clientResponseEssex.getStatus()).thenReturn(200);
-        when(clientResponseEssex.getEntity(String.class)).thenReturn(RESPONSE_ESSEX);
+        when(clientResponseEssex.readEntity(String.class)).thenReturn(RESPONSE_ESSEX);
 
         String resultURL = openStackRegion.getNovaEndPoint(regionName, token);
         // then
@@ -496,33 +484,31 @@ public class OpenStackRegionImplTest extends TestCase{
         assertNotNull(resultURL);
         assertEquals("http://130.206.80.58:8774/v2/", resultURL);
     }
-    
+
     @Test
     public void testShouldGetDefaultRegion() throws OpenStackException {
         // given
 
-      
         String token = "123123232";
         // when
-        when(builder.get(ClientResponse.class)).thenReturn(clientResponse);
+        when(builder.get()).thenReturn(clientResponse);
         when(clientResponse.getStatus()).thenReturn(200);
-        when(clientResponse.getEntity(String.class)).thenReturn(RESPONSE_JSON_GRIZZLY_TWO_REGIONS);
+        when(clientResponse.readEntity(String.class)).thenReturn(RESPONSE_JSON_GRIZZLY_TWO_REGIONS);
 
         String result = openStackRegion.getDefaultRegion(token);
         // then
         assertNotNull(result);
         assertEquals("regionOne", result);
     }
-    
+
     @Test
     public void testShouldGetEndPointsForFederatedNetwork() throws OpenStackException {
         // given
 
-      
         String token = "123123232";
-        when(builder.get(ClientResponse.class)).thenReturn(clientResponse);
+        when(builder.get()).thenReturn(clientResponse);
         when(clientResponse.getStatus()).thenReturn(200);
-        when(clientResponse.getEntity(String.class)).thenReturn(RESPONSE_JSON_GRIZZLY_TWO_REGIONS);
+        when(clientResponse.readEntity(String.class)).thenReturn(RESPONSE_JSON_GRIZZLY_TWO_REGIONS);
         RegionCache regionCache = new RegionCache();
         regionCache.putUrl("regionOne", "federatednetwork", "http://130.206.80.58:8774/v2/12321312312312321");
 

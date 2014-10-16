@@ -49,6 +49,7 @@ public class ErrorHandler extends HttpServlet {
 
     /**
      * Method to handle GET method request.
+     * 
      * @param request
      * @param response
      * @throws ServletException
@@ -70,6 +71,7 @@ public class ErrorHandler extends HttpServlet {
 
     /**
      * Create a response HTTP message.
+     * 
      * @param request
      * @param response
      * @return
@@ -82,9 +84,10 @@ public class ErrorHandler extends HttpServlet {
         Integer code = (Integer) request.getAttribute("javax.servlet.error.status_code");
         Throwable throwable = (Throwable) request.getAttribute("javax.servlet.error.exception");
 
-        log.debug("message: " + message + " code: " + code);
+        log.debug("message: " + message + " code: " + code + " ");
 
         if (throwable != null) {
+            throwable.printStackTrace();
 
             if (throwable instanceof APIException) {
                 message = ((APIException) throwable).getPublicMessage();
@@ -132,6 +135,7 @@ public class ErrorHandler extends HttpServlet {
 
     /**
      * Method to handle POST method request.
+     * 
      * @param request
      * @param response
      * @throws ServletException

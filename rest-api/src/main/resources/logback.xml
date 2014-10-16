@@ -90,7 +90,7 @@
             </pattern>
         </encoder>
     </appender>
-    
+
     <appender name="aspectAppender"
               class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${jetty.base}/logs/paasmanager.log</file>
@@ -105,32 +105,32 @@
     </appender>
 
 
-    <logger name="com.telefonica.euro_iaas.paasmanager.claudia" additivity="true" value="INFO">
+    <logger name="com.telefonica.euro_iaas.paasmanager.claudia" additivity="true" value="DEBUG">
         <appender-ref ref="infrastructureAppender"/>
     </logger>
 
-    <logger name="com.telefonica.euro_iaas.paasmanager.installator" additivity="true" value="INFO">
+    <logger name="com.telefonica.euro_iaas.paasmanager.installator" additivity="true" value="DEBUG">
         <appender-ref ref="installAppender"/>
     </logger>
 
-    <logger name="com.telefonica.euro_iaas.paasmanager.util" additivity="true" value="INFO">
+    <logger name="com.telefonica.euro_iaas.paasmanager.util" additivity="true" value="DEBUG">
         <appender-ref ref="utilAppender"/>
     </logger>
 
-    <logger name="com.telefonica.euro_iaas.paasmanager.rest.auth" additivity="false" value="INFO">
+    <logger name="com.telefonica.euro_iaas.paasmanager.rest.auth" additivity="false" value="DEBUG">
         <appender-ref ref="authAppender"/>
     </logger>
 
-    <logger name="com.telefonica.euro_iaas.paasmanager.manager" additivity="true" value="INFO">
+    <logger name="com.telefonica.euro_iaas.paasmanager.manager" additivity="true" value="DEBUG">
         <appender-ref ref="managerAppender"/>
     </logger>
 
-    <logger name="com.telefonica.euro_iaas.paasmanager.rest.resources" additivity="true" value="INFO">
+    <logger name="com.telefonica.euro_iaas.paasmanager.rest.resources" additivity="true" value="DEBUG">
         <appender-ref ref="restAppender"/>
     </logger>
-    
+
     <logger name="aspectLogger" additivity="false">
-        <level value="INFO"/>
+        <level value="DEBUG"/>
         <appender-ref ref="aspectAppender"/>
     </logger>
 
@@ -153,7 +153,7 @@
         <appender-ref ref="paasAppender"/>
     </logger>
 
-    <root value="WARN">
+    <root value="DEBUG">
         <appender-ref ref="paasAppender"/>
     </root>
 

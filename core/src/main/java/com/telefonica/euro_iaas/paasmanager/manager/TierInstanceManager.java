@@ -103,6 +103,14 @@ public interface TierInstanceManager {
      * @throws EntityNotFoundException
      */
     TierInstance loadByName(String name) throws EntityNotFoundException;
+    
+    /**
+     * 
+     * @param name
+     * @return
+     * @throws EntityNotFoundException
+     */
+    TierInstance loadNetworkInstnace(String name) throws EntityNotFoundException;
 
     /**
      * @param tierInstance

@@ -26,15 +26,17 @@ package com.telefonica.euro_iaas.paasmanager.dao.keystone.impl;
 
 import java.sql.Connection;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.WebResource.Builder;
 import com.telefonica.euro_iaas.commons.dao.EntityNotFoundException;
 import com.telefonica.euro_iaas.paasmanager.dao.keystone.TokenDao;
 import com.telefonica.euro_iaas.paasmanager.exception.OpenStackException;
@@ -54,12 +56,7 @@ public class TokenDaoIdmImpl implements TokenDao {
      */
 
     /**
-     * Find Last Valid Token from user
-     * 
-     * @param name
-     * @return
-     * @throws EntityNotFoundException
-     * @throws OpenStackException
+     * Find Last Valid Token from user.
      */
     public Token findLastTokenFromUser(Connection connection, String tenantId) throws EntityNotFoundException,
             OpenStackException {
@@ -67,25 +64,26 @@ public class TokenDaoIdmImpl implements TokenDao {
         String url = systemPropertiesProvider.getProperty(SystemPropertiesProvider.KEYSTONE_URL) + "tokens";
         log.debug("actionUri: " + url);
 
-        Client client = new Client();
-        ClientResponse response = null;
+        Client client = ClientBuilder.newClient();
+        Response response;
 
-        WebResource wr = client.resource(url);
+        WebTarget wr = client.target(url);
 
         String payload = "{\"auth\":{\"passwordCredentials\":{\"username\": \"admin\", \"password\": \"openstack\"}, \"tenantName\": "
                 + "\"" + tenantId + "\"}}";
 
-        Builder builder = wr.accept(MediaType.APPLICATION_JSON).type(MediaType.APPLICATION_JSON).entity(payload);
+        Invocation.Builder builder = wr.request(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON);
+
         builder = builder.header("Content-type", "application/json");
         builder = builder.header("Accept", "application/xml");
 
-        response = builder.post(ClientResponse.class);
+        response = builder.post(Entity.entity(payload, MediaType.APPLICATION_JSON));
 
         if (response.getStatus() != 200) {
             String message = "Error calling OpenStack to an valid token. " + "Status " + response.getStatus();
             throw new OpenStackException(message);
         }
-        String resp = response.getEntity(String.class);
+        String resp = response.readEntity(String.class);
         log.debug(resp);
         Token token = extractToken(resp);
         token.setTenantId(tenantId);

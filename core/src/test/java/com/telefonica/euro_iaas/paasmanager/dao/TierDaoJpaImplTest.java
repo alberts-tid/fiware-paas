@@ -362,6 +362,24 @@ public class TierDaoJpaImplTest {
         
         assertEquals(tierDao.findAllWithNetwork(net).size(),2);
     }
+    
+    @Test
+    public void testLoadComplete () throws Exception {
+    	ProductRelease prodRelease = new ProductRelease(PRODUCT_NAME, PRODUCT_VERSION);
+        prodRelease = productReleaseDao.create(prodRelease);
+
+        Tier newTier = new Tier(TIER_NAME, MAXIMUM_INSTANCES, MINIMUM_INSTANCES, INITIAL_INSTANCES, null);
+        newTier.setVdc(VDC);
+        newTier.addProductRelease(prodRelease);
+        tierDao.create(newTier);
+
+       
+        Tier tier = tierDao.loadComplete(newTier);
+        assertNotNull (tier);
+        assertNotNull (tier.getProductReleases());
+
+    }
+
 
 
 }

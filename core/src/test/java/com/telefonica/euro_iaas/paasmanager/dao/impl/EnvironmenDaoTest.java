@@ -95,10 +95,15 @@ public class EnvironmenDaoTest {
 
     }
 
-    @Test(expected = com.telefonica.euro_iaas.commons.dao.EntityNotFoundException.class)
+    @Test
     public void testProductLoadEnvInstError() throws EntityNotFoundException {
+    	try {
+    		environmentInstanceDao.load("otro", "3");
+            fail("Should have thrown an EntityNotFoundException because the environment does not exit!");
+         } catch (EntityNotFoundException e) {
 
-        environmentInstanceDao.load("otro", "3");
+         }
+        
     }
 
 
@@ -193,9 +198,8 @@ public class EnvironmenDaoTest {
      * @throws EntityNotFoundException
      * @throws EntityNotFoundException
      */
-    @Test(expected = EntityNotFoundException.class)
-    public void testDeleteNoTiers() throws InvalidEntityException, AlreadyExistsEntityException,
-            EntityNotFoundException {
+    @Test
+    public void testDeleteNoTiers() throws InvalidEntityException, AlreadyExistsEntityException {
 
         Environment environment = new Environment();
         environment.setName(ENVIRONMENT_NAME);
@@ -204,9 +208,12 @@ public class EnvironmenDaoTest {
         environment.setVdc("vdc");
         environment = environmentDao.create(environment);
         environmentDao.remove(environment);
-        environmentDao.load(ENVIRONMENT_NAME, "vdc");
-        fail("Should have thrown an EntityNotFoundException because the environment does not exit!");
-
+        try {
+           environmentDao.load(ENVIRONMENT_NAME, "vdc");
+           fail("Should have thrown an EntityNotFoundException because the environment does not exit!");
+        } catch (EntityNotFoundException e) {
+        	
+        }
     }
 
 

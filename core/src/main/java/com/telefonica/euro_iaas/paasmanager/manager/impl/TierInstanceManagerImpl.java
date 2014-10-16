@@ -370,6 +370,10 @@ public class TierInstanceManagerImpl implements TierInstanceManager {
     public TierInstance loadByName(String name) throws EntityNotFoundException {
         return tierInstanceDao.findByTierInstanceName(name);
     }
+    
+    public TierInstance loadNetworkInstnace(String name) throws EntityNotFoundException {
+        return tierInstanceDao.findByTierInstanceNameNetworkInst(name);
+    }
 
     public void reconfigure(ClaudiaData claudiaData, EnvironmentInstance environmentInstance, TierInstance tierInstance)
             throws ProductReconfigurationException {

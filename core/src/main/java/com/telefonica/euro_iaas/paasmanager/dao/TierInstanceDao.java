@@ -60,5 +60,13 @@ public interface TierInstanceDao extends BaseDAO<TierInstance, String> {
      * @throws EntityNotFoundException
      */
     public TierInstance findByTierInstanceName(String tierInstanceName) throws EntityNotFoundException;
+    
+    /**
+     * 
+     * @param tierInstanceName
+     * @return
+     * @throws EntityNotFoundException
+     */
+    TierInstance findByTierInstanceNameNetworkInst(String tierInstanceName) throws EntityNotFoundException;
 
 }

@@ -139,6 +139,8 @@ public class AbstractEnvironmentResourceImpl implements AbstractEnvironmentResou
         ClaudiaData claudiaData = new ClaudiaData(org, "", environmentDto.getName());
         try {
             environmentManager.load(environmentDto.getName(), "");
+            log.warn ("The enviornment " + environmentDto.getName() 
+                + " already exists");
             throw new APIException(new AlreadyExistEntityException("The enviornment " + environmentDto.getName()
                     + " already exists"));
 

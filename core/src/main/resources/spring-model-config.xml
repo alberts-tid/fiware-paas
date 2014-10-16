@@ -5,7 +5,7 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 
     <beans profile="fiware,dummy">
-       <bean id="restClient" class="com.sun.jersey.api.client.Client" factory-method="create"/>
+        <bean id="restClient" class="javax.ws.rs.client.ClientBuilder" factory-method="newClient"/>
 
         <bean id="openStackRegion" class="com.telefonica.euro_iaas.paasmanager.util.impl.OpenStackRegionImpl">
             <property name="systemPropertiesProvider" ref="systemPropertiesProvider"/>
@@ -52,7 +52,7 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
         </bean>
 
         <!--  MANAGERS -->
-       
+
         <bean id="productReleaseManager" lazy-init="true"
               class="com.telefonica.euro_iaas.paasmanager.manager.impl.ProductReleaseManagerImpl">
             <property name="productReleaseDao" ref="productReleaseDao"/>
@@ -65,9 +65,9 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
             <property name="systemPropertiesProvider" ref="systemPropertiesProvider"/>
             <property name="networkManager" ref="networkManager"/>
             <property name="securityGroupManager" ref="securityGroupManager"/>
-           
+
         </bean>
-   
+
         <bean id="productInstanceManager" lazy-init="true"
               class="com.telefonica.euro_iaas.paasmanager.manager.impl.ProductInstanceManagerImpl">
             <property name="productInstanceDao" ref="productInstanceDao"/>
@@ -174,8 +174,6 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
     </beans>
 
 
-    
-
     <beans profile="fiware">
 
         <bean id="openStackRegion" class="com.telefonica.euro_iaas.paasmanager.util.impl.OpenStackRegionImpl">
@@ -198,7 +196,7 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
             <property name="networkInstanceManager" ref="networkInstanceManager"/>
             <property name="openStackRegion" ref="openStackRegion"/>
             <property name="fileUtils" ref="fileUtils"/>
-            
+
         </bean>
 
         <bean id="productInstallator" lazy-init="true"
@@ -224,13 +222,13 @@ http://www.springframework.org/schema/beans/spring-beans.xsd">
             <property name="openStackRegion" ref="openStackRegion"/>
             <property name="openStackConfigUtil" ref="openStackConfigUtil"/>
         </bean>
-        
+
         <bean id="openOperationUtil" lazy-init="true"
               class="com.telefonica.euro_iaas.paasmanager.util.OpenOperationUtilImpl">
             <property name="openStackRegion" ref="openStackRegion"/>
             <property name="systemPropertiesProvider" ref="systemPropertiesProvider"/>
         </bean>
-        
+
         <bean id="openStackConfigUtil" lazy-init="true"
               class="com.telefonica.euro_iaas.paasmanager.util.OpenStackConfigUtilImpl">
             <property name="openStackRegion" ref="openStackRegion"/>

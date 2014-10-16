@@ -13,6 +13,12 @@
     </parent>
 
     <dependencies>
+
+        <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>javax.ws.rs-api</artifactId>
+        </dependency>
+
         <!-- SPRING SECURITY DEPENDENCIES -->
         <dependency>
             <groupId>org.springframework</groupId>

@@ -208,7 +208,7 @@ public class ITTestOpenStackUtilImpl {
     }
 
     // @Ignore
-    @Test
+    //@Test
     public void testCreateGetDeleteServer() throws OpenStackException {
         try {
             // Creates a new VM
@@ -242,7 +242,7 @@ public class ITTestOpenStackUtilImpl {
      *             The exception from the server
      */
     // @Ignore
-    @Test
+    //@Test
     public void testCreateServerAssignFloatingIP() throws OpenStackException {
         try {
             // Creates a new VM

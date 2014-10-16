@@ -29,19 +29,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 
-import javax.ws.rs.core.MediaType;
-
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -53,8 +47,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.security.core.GrantedAuthority;
 
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
 import com.telefonica.euro_iaas.paasmanager.exception.OpenStackException;
 import com.telefonica.euro_iaas.paasmanager.model.NetworkInstance;
 import com.telefonica.euro_iaas.paasmanager.model.RouterInstance;
@@ -89,55 +81,29 @@ public class OpenStackUtilImplTest {
      * HTTP code for no content response.
      */
     private static int http_code_deleted = 204;
-    
-    String CONTENT_NETWORKS = "{ "+
-    "\"networks\": [ "+ 
-    "{ " + 
-    "\"status\": \"ACTIVE\", "+
-    "\"subnets\": [ " + 
-        "\"81f10269-e0a2-46b0-9583-2c83aa4cc76f\" "+ 
-     " ], " +
-    "\"name\": \"jesuspg-net\", " + 
-    "\"provider:physical_network\": null, "+
-    "\"admin_state_up\": true, "+ 
-    "\"tenant_id\": \"67c979f51c5b4e89b85c1f876bdffe31\", " +
-    "\"router:external\": false, " + 
-    "\"shared\": false, " + 
-    "\"id\": \"047e6dd3-3101-434e-af1e-eea571ab57a4\", " +
-    "\"provider:segmentation_id\": 29 " + 
-    "}, " +
-    "{ " + 
-    "\"status\": \"ACTIVE\", "+
-    "\"subnets\": [ " + 
-        "\"e2d10e6b-33c3-400c-88d6-f905d4cd02f2\" "+ 
-     " ], " +
-    "\"name\": \"ext-net\", " + 
-    "\"provider:physical_network\": null, "+
-    "\"admin_state_up\": true, "+ 
-    "\"tenant_id\": \"08bed031f6c54c9d9b35b42aa06b51c0\", " +
-    "\"router:external\": true, " + 
-    "\"shared\": false, " + 
-    "\"id\": \"080b5f2a-668f-45e0-be23-361c3a7d11d0\", " +
-    "\"provider:segmentation_id\": 1 " + 
-    "} ]} " ;
-    
-    String ROUTERS  =        "{ "+
-    "\"routers\": [ {"+    "\"status\": \"ACTIVE\", "+
-    " \"external_gateway_info\": { " + 
-       " \"network_id\": \"080b5f2a-668f-45e0-be23-361c3a7d11d0\" "+ 
-    " }, " + 
-    " \"name\": \"test-rt1\", " +
-    "\"admin_state_up\": true, "+ 
-    "\"tenant_id\": \"08bed031f6c54c9d9b35b42aa06b51c0\", "+
-    "\"routes\": [], "+
-    "\"id\": \"5af6238b-0e9c-4c20-8981-6e4db6de2e17\"" +
-    "} ]} " ;
+
+    String CONTENT_NETWORKS = "{ " + "\"networks\": [ " + "{ " + "\"status\": \"ACTIVE\", " + "\"subnets\": [ "
+            + "\"81f10269-e0a2-46b0-9583-2c83aa4cc76f\" " + " ], " + "\"name\": \"jesuspg-net\", "
+            + "\"provider:physical_network\": null, " + "\"admin_state_up\": true, "
+            + "\"tenant_id\": \"67c979f51c5b4e89b85c1f876bdffe31\", " + "\"router:external\": false, "
+            + "\"shared\": false, " + "\"id\": \"047e6dd3-3101-434e-af1e-eea571ab57a4\", "
+            + "\"provider:segmentation_id\": 29 " + "}, " + "{ " + "\"status\": \"ACTIVE\", " + "\"subnets\": [ "
+            + "\"e2d10e6b-33c3-400c-88d6-f905d4cd02f2\" " + " ], " + "\"name\": \"ext-net\", "
+            + "\"provider:physical_network\": null, " + "\"admin_state_up\": true, "
+            + "\"tenant_id\": \"08bed031f6c54c9d9b35b42aa06b51c0\", " + "\"router:external\": true, "
+            + "\"shared\": false, " + "\"id\": \"080b5f2a-668f-45e0-be23-361c3a7d11d0\", "
+            + "\"provider:segmentation_id\": 1 " + "} ]} ";
+
+    String ROUTERS = "{ " + "\"routers\": [ {" + "\"status\": \"ACTIVE\", " + " \"external_gateway_info\": { "
+            + " \"network_id\": \"080b5f2a-668f-45e0-be23-361c3a7d11d0\" " + " }, " + " \"name\": \"test-rt1\", "
+            + "\"admin_state_up\": true, " + "\"tenant_id\": \"08bed031f6c54c9d9b35b42aa06b51c0\", "
+            + "\"routes\": [], " + "\"id\": \"5af6238b-0e9c-4c20-8981-6e4db6de2e17\"" + "} ]} ";
 
     @Before
     public void setUp() throws OpenStackException, ClientProtocolException, IOException {
         openStackUtil = new OpenStackUtilImplTestable();
         systemPropertiesProvider = mock(SystemPropertiesProvider.class);
-        openStackConfig = mock (OpenStackConfigUtil.class);
+        openStackConfig = mock(OpenStackConfigUtil.class);
         openStackUtil.setOpenStackConfigUtil(openStackConfig);
         GrantedAuthority grantedAuthority = mock(GrantedAuthority.class);
         Collection<GrantedAuthority> authorities = new HashSet();
@@ -156,31 +122,28 @@ public class OpenStackUtilImplTest {
         openStackRegion = mock(OpenStackRegion.class);
         openStackUtil.setOpenStackRegion(openStackRegion);
         openStackUtil.setOpenOperationUtil(openOperationUtil);
-        
-        
-        
-        String responseJSON = "{\"access\": {\"token\": {\"issued_at\": \"2014-01-13T14:00:10.103025\", \"expires\": \"2014-01-14T14:00:09Z\","+
-        "\"id\": \"ec3ecab46f0c4830ad2a5837fd0ad0d7\", \"tenant\": { \"description\": null, \"enabled\": true, \"id\": \"08bed031f6c54c9d9b35b42aa06b51c0\","+
-        "\"name\": \"admin\" } },         \"serviceCatalog\": []}}}";
-        
-        HttpPost httpPost =  mock(HttpPost.class);
-        
+
+        String responseJSON = "{\"access\": {\"token\": {\"issued_at\": \"2014-01-13T14:00:10.103025\", \"expires\": \"2014-01-14T14:00:09Z\","
+                + "\"id\": \"ec3ecab46f0c4830ad2a5837fd0ad0d7\", \"tenant\": { \"description\": null, \"enabled\": true, \"id\": \"08bed031f6c54c9d9b35b42aa06b51c0\","
+                + "\"name\": \"admin\" } },         \"serviceCatalog\": []}}}";
+
+        HttpPost httpPost = mock(HttpPost.class);
+
         when(closeableHttpClientMock.execute(any(HttpUriRequest.class))).thenReturn(httpResponse);
-        
-        when(openOperationUtil.createNovaPostRequest(anyString(), anyString(), anyString(), anyString(),  anyString(),  anyString(), anyString())).
-            thenReturn(httpPost);
-        
-        when(openOperationUtil.createQuantumGetRequest(anyString(), anyString(), anyString(), anyString(), anyString())).thenReturn(httpPost);
-        
-        
-    
+
+        when(
+                openOperationUtil.createNovaPostRequest(anyString(), anyString(), anyString(), anyString(),
+                        anyString(), anyString(), anyString())).thenReturn(httpPost);
+
+        when(openOperationUtil.createQuantumGetRequest(anyString(), anyString(), anyString(), anyString(), anyString()))
+                .thenReturn(httpPost);
+
     }
-    
 
     @Test
     public void shouldGetAbsoluteLimitsWithResponse204() throws OpenStackException, IOException {
 
-    // when
+        // when
         when(openOperationUtil.getAdminUser(any(PaasManagerUser.class))).thenReturn(paasManagerUser);
         when(openOperationUtil.executeNovaRequest(any(HttpUriRequest.class))).thenReturn("ok");
 
@@ -210,9 +173,9 @@ public class OpenStackUtilImplTest {
     @Test
     public void shouldDeleteSubNetwork() throws OpenStackException, IOException {
 
-        SubNetworkInstance subNet = new SubNetworkInstance("SUBNET","vdc", "region", "CIDR");
+        SubNetworkInstance subNet = new SubNetworkInstance("SUBNET", "vdc", "region", "CIDR");
         subNet.setIdSubNet("ID");
-        
+
         String region = "RegionOne";
 
         // when
@@ -232,7 +195,7 @@ public class OpenStackUtilImplTest {
         openStackUtil.deleteSubNetwork(net.getIdNetwork(), "region", "token", "vdc");
 
         verify(openOperationUtil).executeNovaRequest(any(HttpUriRequest.class));
-       
+
     }
 
     /**
@@ -245,22 +208,21 @@ public class OpenStackUtilImplTest {
     public void shouldAddNetworkInterfacetoPublicRouter() throws OpenStackException, IOException {
         // given
         NetworkInstance net = new NetworkInstance("NETWORK", "vdc", "region");
-        SubNetworkInstance subNet = new SubNetworkInstance("SUBNET","vdc", "region", "CIDR");
+        SubNetworkInstance subNet = new SubNetworkInstance("SUBNET", "vdc", "region", "CIDR");
         net.addSubNet(subNet);
         RouterInstance router = new RouterInstance();
-        
 
         when(openOperationUtil.getAdminUser(any(PaasManagerUser.class))).thenReturn(paasManagerUser);
         when(openOperationUtil.executeNovaRequest(any(HttpUriRequest.class))).thenReturn(ROUTERS);
-        when(openStackConfig.getPublicAdminNetwork(any(PaasManagerUser.class), anyString())).thenReturn("NETWORK"); 
-        when(openStackConfig.getPublicRouter(any(PaasManagerUser.class), anyString(),anyString())).thenReturn("router");   
+        when(openStackConfig.getPublicAdminNetwork(any(PaasManagerUser.class), anyString())).thenReturn("NETWORK");
+        when(openStackConfig.getPublicRouter(any(PaasManagerUser.class), anyString(), anyString()))
+                .thenReturn("router");
 
         String response = openStackUtil.addInterfaceToPublicRouter(paasManagerUser, net, "token");
 
         // then
         assertNotNull(response);
     }
-
 
     /**
      * It deletes a network interface to a public router.
@@ -272,15 +234,16 @@ public class OpenStackUtilImplTest {
     public void shouldDeleteNetworkInterfacetoPublicRouter() throws OpenStackException, IOException {
         // given
         NetworkInstance net = new NetworkInstance("NETWORK", "vdc", "region");
-        SubNetworkInstance subNet = new SubNetworkInstance("SUBNET","vdc", "region", "CIDR");
+        SubNetworkInstance subNet = new SubNetworkInstance("SUBNET", "vdc", "region", "CIDR");
         net.addSubNet(subNet);
         String region = "RegionOne";
         RouterInstance router = new RouterInstance();
 
         when(openOperationUtil.getAdminUser(any(PaasManagerUser.class))).thenReturn(paasManagerUser);
         when(openOperationUtil.executeNovaRequest(any(HttpUriRequest.class))).thenReturn(ROUTERS);
-        when(openStackConfig.getPublicAdminNetwork(any(PaasManagerUser.class), anyString())).thenReturn("NETWORK"); 
-        when(openStackConfig.getPublicRouter(any(PaasManagerUser.class), anyString(),anyString())).thenReturn("router");        
+        when(openStackConfig.getPublicAdminNetwork(any(PaasManagerUser.class), anyString())).thenReturn("NETWORK");
+        when(openStackConfig.getPublicRouter(any(PaasManagerUser.class), anyString(), anyString()))
+                .thenReturn("router");
 
         String response = openStackUtil.deleteInterfaceToPublicRouter(paasManagerUser, net, region);
 
@@ -305,7 +268,7 @@ public class OpenStackUtilImplTest {
         // then
         assertNotNull(response);
     }
-    
+
     @Test
     public void shouldAllocateFloatingIp() throws OpenStackException, IOException {
         // given
@@ -316,18 +279,17 @@ public class OpenStackUtilImplTest {
         // then
         assertNotNull(response);
     }
-    
+
     @Test
     public void shouldDisallocateFloatingIp() throws OpenStackException, IOException {
         // given
-    	String ipsXML = " <floating_ips> <floating_ip instance_id=\"None\" ip=\"130.206.81.152\" fixed_ip=\"None\" "+
-    	" id=\"9c215e37-763a-43d9-b3e2-0e1339d9e238\" pool=\"ext-net\" />"+
-    	" <floating_ip instance_id=\"4b4aa9a8-67e1-4880-86ec-d4b05b45b3db\" ip=\"130.206.81.148\" fixed_ip=\"11.0.0.6\" "+
-    	 " id=\"b0795d3d-d0b6-4568-8328-9961ac1a14c0\" pool=\"ext-net\" />  </floating_ips>";
+        String ipsXML = " <floating_ips> <floating_ip instance_id=\"None\" ip=\"130.206.81.152\" fixed_ip=\"None\" "
+                + " id=\"9c215e37-763a-43d9-b3e2-0e1339d9e238\" pool=\"ext-net\" />"
+                + " <floating_ip instance_id=\"4b4aa9a8-67e1-4880-86ec-d4b05b45b3db\" ip=\"130.206.81.148\" fixed_ip=\"11.0.0.6\" "
+                + " id=\"b0795d3d-d0b6-4568-8328-9961ac1a14c0\" pool=\"ext-net\" />  </floating_ips>";
         when(openOperationUtil.executeNovaRequest(any(HttpUriRequest.class))).thenReturn(ipsXML);
 
-
-        openStackUtil.disAllocateFloatingIP( "region", "token", "vdc", "130.206.81.152");
+        openStackUtil.disAllocateFloatingIP("region", "token", "vdc", "130.206.81.152");
 
     }
 
@@ -347,7 +309,7 @@ public class OpenStackUtilImplTest {
         // then
         assertNotNull(response);
     }
-    
+
     /**
      * It adds a network interface to a public router.
      * 
@@ -366,14 +328,14 @@ public class OpenStackUtilImplTest {
         assertNotNull(response);
 
     }
-    
-    @Test (expected=OpenStackException.class)
+
+    @Test(expected = OpenStackException.class)
     public void testShouldDeployVMError() throws OpenStackException, ClientProtocolException, IOException {
         // given
-        String payload ="";
-        String content = "<badRequest code=\"400\" xmlns=\"http://docs.openstack.org/compute/api/v1.1\">"+
-        "<message>Invalid key_name provided.</message></badRequest>";
-        
+        String payload = "";
+        String content = "<badRequest code=\"400\" xmlns=\"http://docs.openstack.org/compute/api/v1.1\">"
+                + "<message>Invalid key_name provided.</message></badRequest>";
+
         when(openOperationUtil.executeNovaRequest(any(HttpUriRequest.class))).thenReturn(content);
         String response = openStackUtil.createServer(payload, "region", "token", "vdc");
 

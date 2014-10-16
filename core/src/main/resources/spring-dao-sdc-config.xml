@@ -12,5 +12,6 @@
         <property name="systemPropertiesProvider" ref="systemPropertiesProvider"/>
         <property name="client" ref="restClient"></property>
         <property name="sDCUtil" ref="sDCUtil"></property>
+	<property name="sDCClient" ref="sDCClient"/>
     </bean>
 </beans>

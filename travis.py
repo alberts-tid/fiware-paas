@@ -8,9 +8,7 @@ import xml.dom.minidom
 import argparse
 
 
-
 class Config():
-
     def __add_server(self, parent_node, settings, server_name):
         try:
             os.environ["TRAVIS_SECURE_ENV_VARS"]
@@ -54,7 +52,7 @@ class Config():
         mirror_mirrorOf = parent_node.createElement("mirrorOf")
         mirror_mirrorOf_text = parent_node.createTextNode("*")
         mirror_url = parent_node.createElement("url")
-        mirror_url_value = parent_node.createTextNode("http://130.206.80.169/nexus/content/groups/public")
+        mirror_url_value = parent_node.createTextNode("http://130.206.80.85/nexus/content/groups/public")
 
         mirrors.appendChild(mirror)
         mirror_id.appendChild(mirror_id_text)
@@ -66,7 +64,6 @@ class Config():
         mirror.appendChild(mirror_url)
 
     def configure_server(self, server=True, mirrors=True, home_dir=os.path.expanduser("~")):
-
         m2 = xml.dom.minidom.parse(home_dir + '/.m2/settings.xml')
         settings = m2.getElementsByTagName("settings")[0]
 
