@@ -40,53 +40,48 @@ import org.springframework.transaction.annotation.Transactional;
 import com.telefonica.euro_iaas.commons.dao.AbstractBaseDao;
 import com.telefonica.euro_iaas.commons.dao.EntityNotFoundException;
 import com.telefonica.euro_iaas.paasmanager.dao.EnvironmentDao;
-import com.telefonica.euro_iaas.paasmanager.manager.impl.ProductInstanceManagerImpl;
 import com.telefonica.euro_iaas.paasmanager.model.Environment;
 import com.telefonica.euro_iaas.paasmanager.model.Tier;
 import com.telefonica.euro_iaas.paasmanager.model.searchcriteria.EnvironmentSearchCriteria;
 
 @Transactional(propagation = Propagation.REQUIRED)
 public class EnvironmentDaoJpaImpl extends AbstractBaseDao<Environment, String> implements EnvironmentDao {
-	private static Logger log = LoggerFactory.getLogger(EnvironmentDaoJpaImpl.class);
-    private static final String QUERY_LOAD_BY_TWO_FIELDS = "SELECT o FROM {0} o WHERE o.{1} = :{1} and o.{2} =:{2}";
+    private static Logger log = LoggerFactory.getLogger(EnvironmentDaoJpaImpl.class);
 
     /**
-     * It obtains all the environments in database
+     * It obtains all the environments in database.
      */
     public List<Environment> findAll() {
         return super.findAll(Environment.class);
     }
 
-
     /**
-     * It loads for the environment in the database with the name and vdc
-     * 
+     * It loads for the environment in the database with the name and vdc.
      */
     public Environment load(String envName, String vdc) throws EntityNotFoundException {
-    	return findByEnvironmentNameVdc(envName, vdc);
+        return findByEnvironmentNameVdc(envName, vdc);
     }
-    
-    /**
-     * It loads for the abstract environment in the database with the name and vdc
-     * 
-     */
-	public Environment load(String envName) throws EntityNotFoundException {
-	    Query query = getEntityManager().createQuery(
-		"select p from Environment p left join " + "fetch p.tiers where p.name = :name and p.vdc = :vdc");
-		query.setParameter("name", envName);
-		query.setParameter("vdc", "");
-		Environment environment = null;
-		    try {
-		        environment = (Environment) query.getResultList().get(0);
-		} catch (Exception e) {
-		     throw new EntityNotFoundException(Environment.class, "name", envName);
-		}
-        return environment;
-	}
 
-    
     /**
-     * It obtain a set of environments based on a Criteria
+     * It loads for the abstract environment in the database with the name and vdc.
+     */
+    public Environment load(String envName) throws EntityNotFoundException {
+        Query query = getEntityManager().createQuery(
+                "select p from Environment p left join " + "fetch p.tiers where p.name = :name and p.vdc = :vdc");
+        query.setParameter("name", envName);
+        query.setParameter("vdc", "");
+        Environment environment = null;
+        try {
+            environment = (Environment) query.getResultList().get(0);
+        } catch (Exception e) {
+            throw new EntityNotFoundException(Environment.class, "name", envName);
+        }
+        return environment;
+
+    }
+
+    /**
+     * It obtain a set of environments based on a Criteria.
      */
     public List<Environment> findByCriteria(EnvironmentSearchCriteria criteria) {
         Session session = (Session) getEntityManager().getDelegate();
@@ -153,23 +148,23 @@ public class EnvironmentDaoJpaImpl extends AbstractBaseDao<Environment, String> 
     }
 
     private Environment findByEnvironmentNameVdc(String envName, String vdc) throws EntityNotFoundException {
-    	log.info("findByEnvironmentNameVdc");
-    	Query query = getEntityManager().createQuery(
+        log.info("findByEnvironmentNameVdc");
+        Query query = getEntityManager().createQuery(
                 "select p from Environment p left join " + "fetch p.tiers where p.name = :name and p.vdc = :vdc");
         query.setParameter("name", envName);
         query.setParameter("vdc", vdc);
         Environment environment = null;
         try {
             environment = (Environment) query.getResultList().get(0);
-            log.info(""+Hibernate.isInitialized(environment));
+            log.info("" + Hibernate.isInitialized(environment));
             Hibernate.initialize(environment);
-            log.info(""+Hibernate.isInitialized(environment));
+            log.info("" + Hibernate.isInitialized(environment));
         } catch (Exception e) {
-        	log.warn ("Error to load the env " + envName + " " + e.getMessage());
+            log.warn("Error to load the env " + envName + " " + e.getMessage());
             throw new EntityNotFoundException(Environment.class, "name", envName);
         }
         // return filterEqualTiers(environment);
-        
+
         log.info("returning env");
         return environment;
     }

@@ -42,8 +42,9 @@ public class APIException extends WebApplicationException {
 
     /**
      * Assign the cause of the problem to the ServletException class.
-     *
-     * @param cause The cause of the exception.
+     * 
+     * @param cause
+     *            The cause of the exception.
      */
     public APIException(Throwable cause) {
 
@@ -56,15 +57,15 @@ public class APIException extends WebApplicationException {
 
     /**
      * Assign the cause and the http code of the error to the internal variables.
-     *
-     * @param cause The cause of the exception.
-     * @param error The http code of it.
+     * 
+     * @param cause
+     *            The cause of the exception.
+     * @param error
+     *            The http code of it.
      */
     public APIException(Throwable cause, int error) {
 
-        super(Response.status(error).entity(new ErrorResponseConverter(cause))
-                                    .type(MediaType.APPLICATION_JSON)
-                                    .build());
+        super(Response.status(error).entity(new ErrorResponseConverter(cause)).type(MediaType.APPLICATION_JSON).build());
 
         this.httpCode = error;
 
@@ -72,8 +73,8 @@ public class APIException extends WebApplicationException {
 
     /**
      * Return the http code of the error.
-     *
-     * @return  The http code of the error.
+     * 
+     * @return The http code of the error.
      */
     public Integer getCode() {
         return this.code;
@@ -81,8 +82,8 @@ public class APIException extends WebApplicationException {
 
     /**
      * Return the message associated to the error.
-     *
-     * @return  The stored message or the corresponding message to the http error code.
+     * 
+     * @return The stored message or the corresponding message to the http error code.
      */
     public String getMessage() {
         if (message == null) {

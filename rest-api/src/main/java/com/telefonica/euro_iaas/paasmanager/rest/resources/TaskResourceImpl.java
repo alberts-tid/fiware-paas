@@ -66,7 +66,7 @@ public class TaskResourceImpl implements TaskResource {
 
     /**
      * Retrieve the tasks that match with the given criteria.
-     *
+     * 
      * @param page
      *            for pagination is 0 based number(<i>nullable</i>)
      * @param pageSize
@@ -165,6 +165,10 @@ public class TaskResourceImpl implements TaskResource {
         criteria.setToDate(toDate);
         criteria.setEnvironment(environment);
         return taskManager.findByCriteria(criteria);
+    }
+
+    public void setTaskManager(TaskManager taskManager) {
+        this.taskManager = taskManager;
     }
 
 }

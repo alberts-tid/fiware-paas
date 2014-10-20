@@ -135,7 +135,7 @@ public class OpenStackUtilImpl implements OpenStackUtil {
         String idRouter = openStackConfigUtil.getPublicRouter(user, region, networkId);
         PaasManagerUser adminUser = openOperationUtil.getAdminUser(user);
 
-        log.debug("tenantid " + adminUser.getTenantId());
+        log.debug("tenantId " + adminUser.getTenantId());
         log.debug("token " + adminUser.getToken());
         log.debug("user name " + adminUser.getUserName());
 
@@ -231,12 +231,12 @@ public class OpenStackUtilImpl implements OpenStackUtil {
 
         return response;
     }
-    
-   public String getFloatingIPs(String region, String token, String vdc, String dd) throws OpenStackException {
+
+    public String getFloatingIPs(String region, String token, String vdc, String dd) throws OpenStackException {
         String response = null;
 
         try {
-            HttpUriRequest request = openOperationUtil.createNovaGetRequest("/" + RESOURCE_FLOATINGIP, 
+            HttpUriRequest request = openOperationUtil.createNovaGetRequest("/" + RESOURCE_FLOATINGIP,
                     APPLICATION_JSON, region, token, vdc);
 
             response = openOperationUtil.executeNovaRequest(request);
@@ -255,16 +255,17 @@ public class OpenStackUtilImpl implements OpenStackUtil {
 
         return response;
     }
-    
-    public void disAllocateFloatingIP(String region, String token, String vdc, String floatingIp) throws OpenStackException {
-    	log.debug ("disAllocateFloatingIP " +floatingIp );
-    	
-    	String floatingIpsXML = this.getFloatingIPs(region, token, vdc);
+
+    public void disAllocateFloatingIP(String region, String token, String vdc, String floatingIp)
+            throws OpenStackException {
+        log.debug("disAllocateFloatingIP " + floatingIp);
+
+        String floatingIpsXML = this.getFloatingIPs(region, token, vdc);
         String idFloatingIp = this.getFloatingIpId(floatingIpsXML, floatingIp);
 
         try {
-            HttpUriRequest request = openOperationUtil.createNovaDeleteRequest("/" + RESOURCE_FLOATINGIP+"/"+idFloatingIp, 
-                     region, token, vdc);
+            HttpUriRequest request = openOperationUtil.createNovaDeleteRequest("/" + RESOURCE_FLOATINGIP + "/"
+                    + idFloatingIp, region, token, vdc);
 
             openOperationUtil.executeNovaRequest(request);
 
@@ -881,14 +882,14 @@ public class OpenStackUtilImpl implements OpenStackUtil {
         }
         return false;
     }
-    
+
     private String getFloatingIpId(String xmlDoc, String ip) throws OpenStackException {
 
         NodeList floatingIPs = findNodeList(xmlDoc, "floating_ip");
         for (int i = 0; i < floatingIPs.getLength(); i++) {
             Node floatingIPNode = floatingIPs.item(i);
             if (findAttributeValueInNode(floatingIPNode, "ip").equals(ip)) {
-                return findAttributeValueInNode(floatingIPNode, "id"); 
+                return findAttributeValueInNode(floatingIPNode, "id");
             }
         }
         return null;

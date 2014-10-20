@@ -55,7 +55,6 @@ import com.telefonica.euro_iaas.paasmanager.model.Task.TaskStates;
 import com.telefonica.euro_iaas.paasmanager.model.Tier;
 import com.telefonica.euro_iaas.paasmanager.model.dto.ApplicationReleaseDto;
 import com.telefonica.euro_iaas.paasmanager.model.dto.ArtifactDto;
-
 import com.telefonica.euro_iaas.paasmanager.rest.validation.ApplicationInstanceResourceValidator;
 import com.telefonica.euro_iaas.paasmanager.util.SystemPropertiesProvider;
 
@@ -82,7 +81,7 @@ public class ApplicationInstanceResourceImplTest {
 
     /**
      * Initialize the Unit Test.
-     *
+     * 
      * @throws Exception
      */
     @Before
@@ -97,7 +96,6 @@ public class ApplicationInstanceResourceImplTest {
         taskManager = mock(TaskManager.class);
         validator = mock(ApplicationInstanceResourceValidator.class);
 
-
         applicationInstanceResource.setApplicationInstanceAsyncManager(applicationInstanceAsyncManager);
         applicationInstanceResource.setApplicationInstanceManager(applicationInstanceManager);
         applicationInstanceResource.setApplicationReleaseManager(applicationReleaseManager);
@@ -106,15 +104,13 @@ public class ApplicationInstanceResourceImplTest {
         applicationInstanceResource.setTaskManager(taskManager);
         applicationInstanceResource.setValidator(validator);
 
-
         when(systemPropertiesProvider.getProperty(any(String.class))).thenReturn("");
-
 
     }
 
     /**
      * Test the operation of installing an application.
-     *
+     * 
      * @throws Exception
      */
     @Test
@@ -125,22 +121,18 @@ public class ApplicationInstanceResourceImplTest {
         artifacts.add(artifact);
         ApplicationReleaseDto application = new ApplicationReleaseDto("APP", "version", artifacts);
 
-        Mockito
-                .doNothing()
-                .when(validator)
+        Mockito.doNothing().when(validator)
                 .validateInstall(any(String.class), any(String.class), any(ApplicationReleaseDto.class));
 
-        Mockito
-                .doNothing()
+        Mockito.doNothing()
                 .when(applicationInstanceAsyncManager)
-                .install(any(ClaudiaData.class), any(String.class),
-                any(ApplicationRelease.class), any(Task.class), any(String.class));
+                .install(any(ClaudiaData.class), any(String.class), any(ApplicationRelease.class), any(Task.class),
+                        any(String.class));
 
         Task tasks = new Task();
         tasks.setStatus(TaskStates.RUNNING);
         when(taskManager.createTask(any(Task.class))).thenReturn(tasks);
         task = applicationInstanceResource.install(org, vdc, "environment", application, callback);
-
 
         assertNotNull(task);
         assertEquals(task.getStatus(), TaskStates.RUNNING);
@@ -148,18 +140,8 @@ public class ApplicationInstanceResourceImplTest {
     }
 
     /**
-     * Test the operation of finding all application instance resource (not implemented).
-     */
-    @Test
-    public void testFindAll() {
-        //applicationInstanceResource.findAll(page, pageSize, orderBy, orderType, status, vdc,
-        //                            environmentInstance, productInstanceName, applicationName);
-
-    }
-
-    /**
      * Test the operation of find a specific application instance.
-     *
+     * 
      * @throws EntityNotFoundException
      */
     @Test
@@ -173,7 +155,7 @@ public class ApplicationInstanceResourceImplTest {
 
     /**
      * Test the operation of uninstall an applicaiton.
-     *
+     * 
      * @throws EntityNotFoundException
      */
     @Test
@@ -182,8 +164,10 @@ public class ApplicationInstanceResourceImplTest {
         ApplicationInstance app = new ApplicationInstance();
         when(environmentInstanceManager.load(any(String.class), any(String.class))).thenReturn(env);
         when(applicationInstanceManager.load(any(String.class), any(String.class))).thenReturn(app);
-        Mockito.doNothing().when(applicationInstanceAsyncManager).uninstall(any(ClaudiaData.class), any(String.class),
-                any(String.class), any(Task.class), any(String.class));
+        Mockito.doNothing()
+                .when(applicationInstanceAsyncManager)
+                .uninstall(any(ClaudiaData.class), any(String.class), any(String.class), any(Task.class),
+                        any(String.class));
         Task tasks = new Task();
         tasks.setStatus(TaskStates.RUNNING);
         when(taskManager.createTask(any(Task.class))).thenReturn(tasks);

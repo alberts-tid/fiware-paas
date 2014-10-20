@@ -87,9 +87,16 @@ public class OpenStackConfigUtilImpl implements OpenStackConfigUtil {
 
         log.debug("tenatn id" + adminUser.getTenantId() + " tenant name " + adminUser.getTenantName() + " user name"
                 + adminUser.getUserName());
+        HttpUriRequest request;
+        try {
 
-        HttpUriRequest request = openOperationUtil.createQuantumGetRequest(RESOURCE_NETWORKS, APPLICATION_JSON, region,
-                adminUser.getToken(), adminUser.getTenantId());
+            request = openOperationUtil.createQuantumGetRequest(RESOURCE_NETWORKS, APPLICATION_JSON, region,
+                    adminUser.getToken(), adminUser.getTenantId());
+        } catch (OpenStackException e) {
+            log.warn("It is not possible to obtain the quantum endpoint for obtaining the public network net");
+            return null;
+
+        }
 
         String response = null;
 
@@ -134,9 +141,15 @@ public class OpenStackConfigUtilImpl implements OpenStackConfigUtil {
         }
 
         PaasManagerUser adminUser = openOperationUtil.getAdminUser(user);
+        HttpUriRequest request;
 
-        HttpUriRequest request = openOperationUtil.createQuantumGetRequest(RESOURCE_NETWORKS, APPLICATION_JSON, region,
-                adminUser.getToken(), adminUser.getTenantId());
+        try {
+            request = openOperationUtil.createQuantumGetRequest(RESOURCE_NETWORKS, APPLICATION_JSON, region,
+                    adminUser.getToken(), adminUser.getTenantId());
+        } catch (OpenStackException e) {
+            log.warn("Error to obtain the quantum request url ");
+            return "net8300";
+        }
 
         String response = null;
 
@@ -236,7 +249,6 @@ public class OpenStackConfigUtilImpl implements OpenStackConfigUtil {
     }
 
     private NetworkInstance isPublicNetwork(JSONObject jsonNet, String vdc, String region) {
-        log.debug("looking for vdc " + vdc);
 
         NetworkInstance netInst;
         try {
@@ -252,6 +264,10 @@ public class OpenStackConfigUtilImpl implements OpenStackConfigUtil {
         if (!netInst.getExternal()) {
             log.debug("external " + netInst.getExternal());
             return null;
+        }
+
+        if (netInst.getNetworkName().contains("public")) {
+            return netInst;
         }
 
         if (!vdc.contains(netInst.getTenantId())) {
@@ -271,16 +287,14 @@ public class OpenStackConfigUtilImpl implements OpenStackConfigUtil {
             return null;
         }
         log.debug("router " + routerInst.getName() + " " + routerInst.getTenantId() + " " + routerInst.getNetworkId()
-                + " " + vdc);
-        if (!vdc.contains(routerInst.getTenantId())) {
-            return null;
-        }
+                + " " + networkPublic);
 
         if (!routerInst.getNetworkId().equals(networkPublic)) {
             return null;
+        } else {
+            return routerInst;
         }
 
-        return routerInst;
     }
 
     public OpenStackRegion getOpenStackRegion() {
