@@ -64,7 +64,7 @@ Feature: Update a tier of an environment in a tenant
             | nameqa1 | tiernameqa1 | git=1.7                  |
             | nameqa2 | tiernameqa2 | git=1.7,mediawiki=1.17.0 |
         
-    @skip @CLAUDIA-3677
+
     Scenario Outline: Update tier of an environment adding new networks
         Given the paas manager is up and properly configured
         And an environment has already been created with data:
@@ -85,8 +85,7 @@ Feature: Update a tier of an environment in a tenant
             | name    | tiername    | networks      |
             | nameqa1 | tiernameqa1 | netqa1        |
             | nameqa2 | tiernameqa2 | netqa1,netqa2 |
-        
-    @skip @CLAUDIA-3677
+
     Scenario Outline: Update tier of an environment removing its networks
         Given the paas manager is up and properly configured
         And an environment has already been created with data:
@@ -107,8 +106,7 @@ Feature: Update a tier of an environment in a tenant
             | name    | tiername    | networks      |
             | nameqa1 | tiernameqa1 | netqa1        |
             | nameqa2 | tiernameqa2 | netqa1,netqa2 |
-        
-    @skip @CLAUDIA-3677
+
     Scenario Outline: Update tier of an environment adding new products and networks
         Given the paas manager is up and properly configured
         And an environment has already been created with data:
@@ -129,8 +127,7 @@ Feature: Update a tier of an environment in a tenant
             | name    | tiername    | products                 | networks      |
             | nameqa1 | tiernameqa1 | git=1.7                  | netqa1        |
             | nameqa2 | tiernameqa2 | git=1.7,mediawiki=1.17.0 | netqa1,netqa2 |
-        
-    @skip @CLAUDIA-3677
+
     Scenario Outline: Update tier of an environment removing its products and networks
         Given the paas manager is up and properly configured
         And an environment has already been created with data:

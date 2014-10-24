@@ -77,7 +77,6 @@ public class EnvironmentDaoJpaImpl extends AbstractBaseDao<Environment, String> 
             throw new EntityNotFoundException(Environment.class, "name", envName);
         }
         return environment;
-
     }
 
     /**

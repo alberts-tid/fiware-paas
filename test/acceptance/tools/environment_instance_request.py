@@ -282,6 +282,6 @@ def check_task_status(task_data, expected_status):
     :param task_data: Dictionary with the task data.
     :param expected_status: Expected status of the task.
     """
-    assert task_data["@status"] == expected_status,\
+    assert task_data["status"] == expected_status,\
     "Wrong status received: %s. Expected: %s. Task data: %s"\
-    % (task_data["@status"], expected_status, task_data)
+    % (task_data["status"], expected_status, task_data)

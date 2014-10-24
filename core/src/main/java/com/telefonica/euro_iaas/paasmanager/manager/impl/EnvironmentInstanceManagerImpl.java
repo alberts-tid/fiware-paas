@@ -386,11 +386,11 @@ public class EnvironmentInstanceManagerImpl implements EnvironmentInstanceManage
                     tierInstanceDao.update(tierInstance);
                 } catch (EntityNotFoundException enfe) {
                     String errorMsg = "The ChefClient " + tierInstance.getVM().getHostname() + " is not at ChefServer";
-                    log.error(errorMsg);
+                    log.warn(errorMsg);
                 } catch (Exception e) {
                     String errorMsg = "Error deleting node from Node Manager : " + tierInstance.getVM().getFqn() + ""
                             + e.getMessage();
-                    log.error(errorMsg);
+                    log.warn(errorMsg);
                     throw new InvalidEntityException(EnvironmentInstance.class, e);
                 }
                 // }

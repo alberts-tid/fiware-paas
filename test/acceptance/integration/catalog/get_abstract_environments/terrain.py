@@ -21,6 +21,7 @@
 # contact with opensource@tid.es
 
 from lettuce import world, after, before
+from tools import terrain_steps
 from tools import environment_request
 from tools.environment_request import EnvironmentRequest
 from tools.constants import PAAS, KEYSTONE_URL, PAASMANAGER_URL, TENANT, USER,\
@@ -37,8 +38,17 @@ def before_each_scenario(feature):
         world.config[PAAS][VDC],
         world.config[PAAS][SDC_URL])
 
+    # Create product in SDC to be used by this feature
+    terrain_steps.init_products_in_sdc()
+
 
 @after.each_scenario
 def after_each_scenario(scenario):
     # Delete the environments created in the scenario.
     environment_request.delete_created_abstract_environments()
+
+
+@after.each_feature
+def after_each_feature(feature):
+    """ Remove testing products in SDC """
+    terrain_steps.remove_testing_products_in_sdc()

@@ -17,7 +17,6 @@
         <product.name>FIWARE</product.name>
         <product.release>3.5.3</product.release>
 
-
         <repoName>fiware-paas</repoName>
 
         <scmURI>git@github.com:telefonicaid</scmURI>
@@ -356,6 +355,7 @@
                     <descriptor>src/assembly/distribution.xml</descriptor>
                 </configuration>
             </plugin>
+
         </plugins>
 
         <pluginManagement>

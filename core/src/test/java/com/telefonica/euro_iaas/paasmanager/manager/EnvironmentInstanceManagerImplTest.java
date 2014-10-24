@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Set;
 import static org.mockito.Mockito.verify;
 
+import com.telefonica.euro_iaas.commons.dao.AlreadyExistsEntityException;
 import com.telefonica.euro_iaas.commons.dao.EntityNotFoundException;
 import com.telefonica.euro_iaas.commons.dao.InvalidEntityException;
 import com.telefonica.euro_iaas.paasmanager.dao.EnvironmentDao;
@@ -41,6 +42,9 @@ import com.telefonica.euro_iaas.paasmanager.dao.EnvironmentInstanceDao;
 import com.telefonica.euro_iaas.paasmanager.dao.ProductReleaseDao;
 import com.telefonica.euro_iaas.paasmanager.dao.TierDao;
 import com.telefonica.euro_iaas.paasmanager.exception.InfrastructureException;
+import com.telefonica.euro_iaas.paasmanager.exception.InvalidOVFException;
+import com.telefonica.euro_iaas.paasmanager.exception.InvalidVappException;
+import com.telefonica.euro_iaas.paasmanager.exception.ProductInstallatorException;
 import com.telefonica.euro_iaas.paasmanager.manager.impl.EnvironmentInstanceManagerImpl;
 import com.telefonica.euro_iaas.paasmanager.model.ClaudiaData;
 import com.telefonica.euro_iaas.paasmanager.model.Environment;
@@ -61,6 +65,7 @@ import org.springframework.security.core.GrantedAuthority;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.anySet;
@@ -215,16 +220,4 @@ public class EnvironmentInstanceManagerImplTest {
 
     }
 
-    /*
-     * @Test public void testCreateEnvironment() throws Exception { EnvironmentInstanceManagerImpl manager = new
-     * EnvironmentInstanceManagerImpl(); manager.setEnvironmentInstanceDao(environmentInstanceDao);
-     * manager.setEnvironmentManager(environmentManager); manager.setInfrastructureManager(infrastructureManager);
-     * manager.setProductInstanceManager(productInstanceManager); EnvironmentInstance environmentInstanceCreated =
-     * manager.create( claudiaData, environmentInstance);
-     * assertEquals(environmentInstanceCreated.getEnvironment().getName(), environment.getName());
-     * assertEquals(environmentInstanceCreated.getTierInstances().size(), 1);
-     * assertEquals(environmentInstanceCreated.getTierInstances().get(0) .getVM().getHostname(), "hostname1");
-     * assertEquals(environmentInstanceCreated.getTierInstances().get(0) .getVM().getFqn(), "fqn1");
-     * assertEquals(environmentInstanceCreated.getTierInstances().get(0) .getVM().getIp(), "ip1"); }
-     */
 }

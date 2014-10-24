@@ -300,9 +300,6 @@
             <artifactId>jersey-media-json-jackson</artifactId>
         </dependency>
 
-        <!--<dependency> <groupId>bouncycastle</groupId> <artifactId>bcprov-jdk16</artifactId>
-            <version>140</version> </dependency> -->
-
         <dependency>
             <groupId>javax.ws.rs</groupId>
             <artifactId>javax.ws.rs-api</artifactId>

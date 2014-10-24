@@ -178,7 +178,7 @@ public class RouterInstance {
         String id = (String) jsonRouter.get("id");
         boolean adminStateUp = (Boolean) jsonRouter.get("admin_state_up");
         String tenantId = (String) jsonRouter.get("tenant_id");
-        String networkId = null;
+        String networkId = "";
         try {
             JSONObject array = jsonRouter.getJSONObject("external_gateway_info");
             networkId = (String) array.get("network_id");
