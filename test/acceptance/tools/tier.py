@@ -277,10 +277,9 @@ def check_get_tiers_response(response, expected_status_code,
         #print data, "\n\n\n\n"
         if expected_tiers_number == 0:
             # No content expected when the lists of tiers is empty
-            assert data == None, "Unexpected content received: %s" % data
+            assert (data is None or len(data) == 0), "Unexpected content received: %s" % data
         else:
-            tiers = data["tierDto"]
-            world.response.tiers = process_tiers(tiers)
+            world.response.tiers = process_tiers(data)
 
             assert len(world.response.tiers) == expected_tiers_number,\
             "Wrong number of tiers received: %d. Expected: %d."\

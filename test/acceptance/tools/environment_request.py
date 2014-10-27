@@ -464,10 +464,9 @@ def check_get_environments_response(response, expected_status_code,
         #print data, "\n\n\n\n"
         if expected_environments_number == 0:
             # No content expected when the lists of environments is empty
-            assert data == None, "Unexpected content received: %s" % data
+            assert data is None or len(data) == 0, "Unexpected content received: %s" % data
         else:
-            environments = data["environmentDto"]
-            world.response.environments = process_environments(environments)
+            world.response.environments = process_environments(data)
 
             if expected_environments_number == "+":  # The "+" wildcard is allowed
                 assert len(world.response.environments) > 0,\

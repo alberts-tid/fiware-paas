@@ -84,7 +84,7 @@ public class TierManagerImpl implements TierManager {
             StringTokenizer st = new StringTokenizer(openPortsAttribute.getValue());
             while (st.hasMoreTokens()) {
                 String token = st.nextToken();
-                Rule rule = createRulePort(token);
+                Rule rule = createRulePort(token, "TCP");
 
                 securityGroupManager.addRule(tier.getRegion(), token, tier.getVdc(), tier.getSecurityGroup(), rule);
 
@@ -149,10 +149,15 @@ public class TierManagerImpl implements TierManager {
      * @return
      */
 
-    public Rule createRulePort(String port) {
+    public Rule createRulePort(String port, String protocol) {
         log.info("Generate security rule " + port);
-        Rule rule = new Rule("TCP", port, port, "", "0.0.0.0/0");
-        return rule;
+        if (port.contains("-")) {
+        	return new Rule(protocol, port.substring(0, port.indexOf("-")),  
+        	    port.substring(port.indexOf("-")+1), "", "0.0.0.0/0");
+        } else {
+        	return new Rule(protocol, port, port, "", "0.0.0.0/0");
+        }
+
     }
 
     /**
@@ -348,24 +353,26 @@ public class TierManagerImpl implements TierManager {
 
         productRelease = productReleaseManager.loadWithMetadata(productRelease.getProduct() + "-"
                 + productRelease.getVersion());
-        getRules(productRelease, rules, "open_ports");
-        getRules(productRelease, rules, "open_ports_udp");
+        getRules(productRelease, rules, "open_ports", "TCP");
+        getRules(productRelease, rules, "open_ports_udp", "UCP");
 
     }
 
-    private void getRules(ProductRelease productRelease, List<Rule> rules, String pathrules) {
+    private void getRules(ProductRelease productRelease, List<Rule> rules, String pathrules, String protocol) {
         Metadata openPortsAttribute = productRelease.getMetadata(pathrules);
         if (openPortsAttribute != null) {
             log.info("Adding product rule " + openPortsAttribute.getValue());
             StringTokenizer st = new StringTokenizer(openPortsAttribute.getValue());
             while (st.hasMoreTokens()) {
-                Rule rule = createRulePort(st.nextToken());
+                Rule rule = createRulePort(st.nextToken(), protocol);
                 if (!rules.contains(rule)) {
                     rules.add(rule);
                 }
             }
         }
     }
+    
+   
 
     public Tier load(String name, String vdc, String environmentName) throws EntityNotFoundException {
         try {

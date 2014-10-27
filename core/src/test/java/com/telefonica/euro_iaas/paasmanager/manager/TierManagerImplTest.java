@@ -123,6 +123,10 @@ public class TierManagerImplTest {
 
     }
 
+    /** 
+     * It creates a security group for a metadata restriction including just tcp rules
+     * @throws EntityNotFoundException
+     */
     @Test
     public void testcreateSecurityGroupTcp() throws EntityNotFoundException {
         productRelease = new ProductRelease("product", "2.0");
@@ -139,6 +143,10 @@ public class TierManagerImplTest {
         assertEquals(securityGroup.getRules().size(), 2);
     }
     
+    /** 
+     * It creates a security group for a metadata restriction including tcp and upd rules
+     * @throws EntityNotFoundException
+     */
     @Test
     public void testcreateSecurityGroupTcpUdp() throws EntityNotFoundException {
         productRelease = new ProductRelease("product", "2.0");
@@ -154,6 +162,53 @@ public class TierManagerImplTest {
         SecurityGroup securityGroup = tierManager.generateSecurityGroup(data, tier);
         assertEquals(securityGroup.getName(), "sg_dd_dd_" + tier.getName());
         assertEquals(securityGroup.getRules().size(), 3);
+    }
+    
+    /** 
+     * It creates a security group for a metadata restriction including just upd rules
+     * @throws EntityNotFoundException
+     */
+    @Test
+    public void testcreateSecurityGroupUdp() throws EntityNotFoundException {
+        productRelease = new ProductRelease("product", "2.0");
+        productRelease.addMetadata(new Metadata("open_ports_udp", "1212"));
+
+        productReleases = new ArrayList<ProductRelease>();
+        productReleases.add(productRelease);
+        Tier tier = new Tier("name", new Integer(1), new Integer(1), new Integer(1), productReleases, "flavour",
+                "image", "icono", "keypair", "floatingip", "payload");
+        when(productReleaseManager.loadWithMetadata(any(String.class))).thenReturn(productRelease);
+
+        SecurityGroup securityGroup = tierManager.generateSecurityGroup(data, tier);
+        assertEquals(securityGroup.getName(), "sg_dd_dd_" + tier.getName());
+        assertEquals(securityGroup.getRules().size(), 2);
+        assertEquals(securityGroup.getRules().get(0).getIpProtocol(), "TCP");
+        assertEquals(securityGroup.getRules().get(1).getIpProtocol(), "UCP");
+        assertEquals(securityGroup.getRules().get(1).getFromPort(), "1212");
+    }
+    
+    /** 
+     * It creates a security group for a metadata restriction with a port range
+     * @throws EntityNotFoundException
+     */
+    @Test
+    public void testcreateSecurityGroupUdpRange() throws EntityNotFoundException {
+        productRelease = new ProductRelease("product", "2.0");
+        productRelease.addMetadata(new Metadata("open_ports_udp", "1212-2024"));
+
+        productReleases = new ArrayList<ProductRelease>();
+        productReleases.add(productRelease);
+        Tier tier = new Tier("name", new Integer(1), new Integer(1), new Integer(1), productReleases, "flavour",
+                "image", "icono", "keypair", "floatingip", "payload");
+        when(productReleaseManager.loadWithMetadata(any(String.class))).thenReturn(productRelease);
+
+        SecurityGroup securityGroup = tierManager.generateSecurityGroup(data, tier);
+        assertEquals(securityGroup.getName(), "sg_dd_dd_" + tier.getName());
+        assertEquals(securityGroup.getRules().size(), 2);
+        assertEquals(securityGroup.getRules().get(0).getIpProtocol(), "TCP");
+        assertEquals(securityGroup.getRules().get(1).getIpProtocol(), "UCP");
+        assertEquals(securityGroup.getRules().get(1).getFromPort(), "1212");
+        assertEquals(securityGroup.getRules().get(1).getToPort(), "2024");
     }
 
     @Test

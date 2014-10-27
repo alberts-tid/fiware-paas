@@ -81,13 +81,18 @@ def get_content_type(filename):
 
 
 def __do_http_req(method, url, headers, payload):
-    #print payload, "\n\n\n\n"
+    #print "##### REQUEST #####"
+    #print method, url
+    #print payload, "\n"
+
     url = urllib.quote(url, ":/")  # Apply URL encoding to the URL
     parsed_url = urlparse(url)
-    con = httplib.HTTPConnection(parsed_url.netloc)
+    if 'https' in parsed_url[0]:
+        con = httplib.HTTPSConnection(parsed_url.netloc)
+    else:
+        con = httplib.HTTPConnection(parsed_url.netloc)
     con.request(method, parsed_url.path, payload, headers)
     return con.getresponse()
-
 
     ##
     ## Metod que hace el HTTP-GET
@@ -149,15 +154,15 @@ def get_token(keystone_url, tenant, user, password):
 
 def wait_for_task(task_data, headers):
     try:
-        href = task_data["@href"]
-        status = task_data["@status"]
+        href = task_data["href"]
+        status = task_data["status"]
     except:
         assert False, "No task information received: %s" % (task_data)
 
     while status == 'RUNNING':
         time.sleep(5)
         task_data = json.loads(get_task_data(href, headers))
-        status = task_data["@status"]
+        status = task_data["status"]
 
     return task_data
 
