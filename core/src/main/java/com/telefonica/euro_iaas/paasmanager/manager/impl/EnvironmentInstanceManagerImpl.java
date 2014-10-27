@@ -91,8 +91,12 @@ public class EnvironmentInstanceManagerImpl implements EnvironmentInstanceManage
 
     /*
      * (non-Javadoc)
-     * @see com.telefonica.euro_iaas.paasmanager.manager.EnvironmentInstanceManager #findByCriteria
-     * (com.telefonica.euro_iaas.paasmanager.model.searchcriteria. EnvironmentInstanceSearchCriteria)
+     * 
+     * @see
+     * com.telefonica.euro_iaas.paasmanager.manager.EnvironmentInstanceManager
+     * #findByCriteria
+     * (com.telefonica.euro_iaas.paasmanager.model.searchcriteria.
+     * EnvironmentInstanceSearchCriteria)
      */
     public List<EnvironmentInstance> findByCriteria(EnvironmentInstanceSearchCriteria criteria) {
 
@@ -101,7 +105,10 @@ public class EnvironmentInstanceManagerImpl implements EnvironmentInstanceManage
 
     /*
      * (non-Javadoc)
-     * @see com.telefonica.euro_iaas.paasmanager.manager.EnvironmentInstanceManager #findAll()
+     * 
+     * @see
+     * com.telefonica.euro_iaas.paasmanager.manager.EnvironmentInstanceManager
+     * #findAll()
      */
     public List<EnvironmentInstance> findAll() {
         return environmentInstanceDao.findAll();
@@ -360,7 +367,9 @@ public class EnvironmentInstanceManagerImpl implements EnvironmentInstanceManage
 
     /*
      * (non-Javadoc)
-     * @see com.telefonica.euro_iaas.paasmanager.manager.EnvironmentInstanceManager
+     * 
+     * @see
+     * com.telefonica.euro_iaas.paasmanager.manager.EnvironmentInstanceManager
      * #destroy(com.telefonica.euro_iaas.paasmanager.model.EnvironmentInstance)
      */
     public void destroy(ClaudiaData claudiaData, EnvironmentInstance envInstance) throws InvalidEntityException {
@@ -372,28 +381,6 @@ public class EnvironmentInstanceManagerImpl implements EnvironmentInstanceManage
             envInstance.setStatus(Status.UNINSTALLING);
             envInstance = environmentInstanceDao.update(envInstance);
             for (int i = 0; i < envInstance.getTierInstances().size(); i++) {
-                TierInstance tierInstance = envInstance.getTierInstances().get(i);
-                log.info("Deleting node " + tierInstance.getVM().getHostname());
-                tierInstance.setStatus(Status.UNINSTALLING);
-                tierInstanceDao.update(tierInstance);
-                try {
-                    ChefClient chefClient = productInstallator.loadNode(claudiaData, tierInstance.getVdc(),
-                            tierInstance.getVM().getHostname());
-
-                    productInstallator.deleteNode(claudiaData, tierInstance.getVdc(), chefClient.getName());
-
-                    tierInstance.setStatus(Status.UNINSTALLED);
-                    tierInstanceDao.update(tierInstance);
-                } catch (EntityNotFoundException enfe) {
-                    String errorMsg = "The ChefClient " + tierInstance.getVM().getHostname() + " is not at ChefServer";
-                    log.warn(errorMsg);
-                } catch (Exception e) {
-                    String errorMsg = "Error deleting node from Node Manager : " + tierInstance.getVM().getFqn() + ""
-                            + e.getMessage();
-                    log.warn(errorMsg);
-                    throw new InvalidEntityException(EnvironmentInstance.class, e);
-                }
-                // }
 
                 envInstance.setStatus(Status.UNINSTALLED);
                 envInstance = environmentInstanceDao.update(envInstance);
@@ -412,7 +399,6 @@ public class EnvironmentInstanceManagerImpl implements EnvironmentInstanceManage
                     throw new InvalidEntityException(EnvironmentInstance.class, e);
                 }
 
-                envInstance.setStatus(Status.UNDEPLOYED);
             }
 
             // Borrado del registro en BBDD paasmanager
@@ -436,8 +422,36 @@ public class EnvironmentInstanceManagerImpl implements EnvironmentInstanceManage
             log.info("Environment Instance " + envInstance.getBlueprintName()
                     + " does not have any TierInstances associated");
         } finally {
+            envInstance.setStatus(Status.UNDEPLOYED);
             environmentInstanceDao.remove(envInstance);
             log.info("Environment Instance " + envInstance.getBlueprintName() + " DESTROYED");
+            
+            for (int i = 0; i < envInstance.getTierInstances().size(); i++) {
+                // delete data on SDC
+                TierInstance tierInstance = envInstance.getTierInstances().get(i);
+                log.info("Deleting node " + tierInstance.getVM().getHostname());
+                tierInstance.setStatus(Status.UNINSTALLING);
+                tierInstanceDao.update(tierInstance);
+                try {
+                    ChefClient chefClient = productInstallator.loadNode(claudiaData, tierInstance.getVdc(),
+                            tierInstance.getVM().getHostname());
+
+                    productInstallator.deleteNode(claudiaData, tierInstance.getVdc(), chefClient.getName());
+
+                    tierInstance.setStatus(Status.UNINSTALLED);
+                    tierInstanceDao.update(tierInstance);
+                } catch (EntityNotFoundException enfe) {
+                    String errorMsg = "The ChefClient " + tierInstance.getVM().getHostname() + " is not at ChefServer";
+                    log.warn(errorMsg);
+                } catch (Exception e) {
+                    String errorMsg = "Error deleting node from Node Manager : " + tierInstance.getVM().getFqn() + ""
+                            + e.getMessage();
+                    log.warn(errorMsg);
+                    throw new InvalidEntityException(EnvironmentInstance.class, e);
+                }
+            }
+
+           
         }
 
     }
@@ -458,8 +472,8 @@ public class EnvironmentInstanceManagerImpl implements EnvironmentInstanceManage
         if (systemPropertiesProvider.getProperty(SystemPropertiesProvider.CLOUD_SYSTEM).equals("FIWARE")) {
             try {
                 environment = environmentManager.load(env.getName(), env.getVdc());
-                log.info ("afeter obtainin environment");
-                
+                log.info("afeter obtainin environment");
+
                 Set<Tier> tiers = new HashSet();
                 for (Tier tier : env.getTiers()) {
                     Tier tierDB = tierManager.loadTierWithNetworks(tier.getName(), env.getVdc(), env.getName());
@@ -487,7 +501,7 @@ public class EnvironmentInstanceManagerImpl implements EnvironmentInstanceManage
 
                 return environment;
             } catch (Exception e1) {
-            	log.warn ("Error to load env " + e1.getMessage());
+                log.warn("Error to load env " + e1.getMessage());
                 throw new EntityNotFoundException(Environment.class,
                         "The environment should have been already created", e1);
             }
