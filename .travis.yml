@@ -13,6 +13,6 @@ env:
   - SONATYPE_USERNAME=deployment
   - COVERALLS_REPO_TOKEN=RrZy7EkcguhLugd742Mjikb0YKhNj37Jw
 after_success:
-- mvn cobertura:cobertura coveralls:cobertura
+- mvn cobertura:cobertura coveralls:report
 - '[[ $TRAVIS_REPO_SLUG == telefonicaid* ]] && [[ $TRAVIS_PULL_REQUEST == "false" ]] && [[ $TRAVIS_BRANCH == "master" ]] && { python travis.py --deploy; mvn deploy -DskipTests=true; };'
 - '[[ $TRAVIS_REPO_SLUG == telefonicaid* ]] && [[ $TRAVIS_PULL_REQUEST == "false" ]] && [[ $TRAVIS_BRANCH == "develop" ]] && { python travis.py --deploy; mvn deploy -DskipTests=true; };'
